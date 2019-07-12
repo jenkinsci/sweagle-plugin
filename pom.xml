@@ -9,7 +9,7 @@
 		<relativePath />
 		<version>2.37</version>
 	</parent>
-	<groupid>io.jenkins.plugins</groupid>
+	<groupId>io.jenkins.plugins</groupId>
 	<artifactId>sweagle</artifactId>
 	<version>0.0.2-SNAPSHOT</version>
 	<packaging>hpi</packaging>
