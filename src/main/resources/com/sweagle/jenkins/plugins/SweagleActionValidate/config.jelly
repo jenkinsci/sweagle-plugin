@@ -14,16 +14,11 @@
     <f:entry title="MDS Name" field="mdsName">
         <f:textbox checkMethod="post" />
     </f:entry>
-    <f:entry title="File Location" field="fileLocation">
-        <f:textbox checkMethod="post" />
-    </f:entry>
- 	<f:entry title="Show API responses in console log" field="showResults">
-        <f:checkbox/>
-    </f:entry>
+ 
     <f:block>
     <table>
     
-      <f:optionalBlock name="markFailed" title="Fail build on config errors" inline="true" checked="${instance.markFailed}">
+      <f:optionalBlock name="markFailed" title="Fail build on validate errors" inline="true" checked="${instance.markFailed}">
   <f:entry title="Warning Threshold" field="warnMax">
         <f:textbox checkMethod="post" />
     </f:entry>
@@ -31,20 +26,13 @@
         <f:textbox checkMethod="post" />
     </f:entry>
       </f:optionalBlock>
-    
- 
-    <hr>Validate</hr> 
-    
+        
     </table>
-    <hr>Snapshot</hr> 
-    <f:entry title="Tag" field="tag">
-        <f:textbox checkMethod="post" />
-    </f:entry>
-    <f:entry title="Description" field="description">
-        <f:textbox checkMethod="post" />
-    </f:entry>
+    
   </f:block>
     
-
+	<f:entry title="Show API responses in console log" field="showResults">
+        <f:checkbox/>
+    </f:entry>
 
 </j:jelly>

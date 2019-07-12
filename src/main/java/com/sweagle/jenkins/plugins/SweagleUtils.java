@@ -147,7 +147,7 @@ public class SweagleUtils {
 		return responseString;
 	}
 
-	static String exportConfig(String sweagleURL, Secret sweagleAPIkey, String mdsName, String fileLocation, String exporter, String args, String format, boolean markFailed, TaskListener listener) throws AbortException {
+	static String exportConfig(String sweagleURL, Secret sweagleAPIkey, String mdsName, String fileLocation, String exporter, String args, String format, boolean markFailed, TaskListener listener, EnvVars env) throws AbortException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Exporting from " + mdsName + " with exporter " + exporter+" in format "+format+" at "+ sweagleURL);
@@ -182,7 +182,7 @@ public class SweagleUtils {
 		String content=responseString;
 		
 		try {
-			Files.write(Paths.get(fileLocation), content.getBytes(StandardCharsets.UTF_8));
+			Files.write(Paths.get(env.get("WORKSPACE")+"/"+fileLocation), content.getBytes(StandardCharsets.UTF_8));
 		} catch (Exception e) {
 			if (markFailed)
 				throw new AbortException(e.toString());

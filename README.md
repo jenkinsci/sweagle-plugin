@@ -16,9 +16,19 @@ The plugin supports for jenkins build steps ay for stages of a config data lifec
 Test the connection before saving.  A successful connection will show the amount of Metadata Sets available to the API Key.
 ## Upload Build Step
 
+![upload](screenshots/upload.png)
+
 ## Validate Build Step
+
+![validate](/Users/joeo/eclipse-workspace/sweagle-jenkins-plugin/screenshots/validate.png)
+
+
 
 ## Snapshot Build Step
 
+![snapshot](/Users/joeo/eclipse-workspace/sweagle-jenkins-plugin/screenshots/snapshot.png)
+
 ## Export Build Step
+
+![export](/Users/joeo/eclipse-workspace/sweagle-jenkins-plugin/screenshots/export.png)
 
