@@ -1,0 +1,29 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+    <f:entry title="Action Name" field="actionName">
+        <f:textbox checkMethod="post" />
+    </f:entry>
+    <f:entry title="File Location" field="fileLocation">
+        <f:textbox checkMethod="post" />
+    </f:entry>
+     <f:entry title="Node Path" field="nodePath">
+        <f:textbox checkMethod="post" />
+    </f:entry>
+       <f:entry name="format" title="Choose file format" field="format">
+	    <select name="format">
+	        <option value="json"  selected="${instance.format.equals('json')? 'true':null}">json</option>
+	        <option value="yaml" selected="${instance.format.equals('yaml')? 'true':null}">yaml</option>
+	        <option value="xml" selected="${instance.format.equals('xml')? 'true':null}">xml</option>
+	        <option value="txt" selected="${instance.format.equals('txt')? 'true':null}">txt</option>
+	        <option value="properties" selected="${instance.format.equals('properties')? 'true':null}">properties</option>
+	        <option value="ini" selected="${instance.format.equals('ini')? 'true':null}">ini</option>
+	    </select>
+    </f:entry>
+    <f:entry title="Fail build on failed upload" field="markFailed">
+        <f:checkbox/>
+    </f:entry>
+ 	<f:entry title="Show API responses in console log" field="showResults">
+        <f:checkbox/>
+    </f:entry>
+
+</j:jelly>
