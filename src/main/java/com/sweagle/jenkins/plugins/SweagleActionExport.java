@@ -50,10 +50,10 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	private String actionName;
 
 	@CheckForNull
-	private String fileLocation;
+	private String mdsName;	
 	
 	@CheckForNull
-	private String nodePath;
+	private String fileLocation;		
 	
 	@CheckForNull
 	private String format;
@@ -61,14 +61,19 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	@CheckForNull
 	private String exporter;
 
+	@CheckForNull
+	private String args;
+	
 	private boolean markFailed;
 	private boolean showResults;
 
 	@DataBoundConstructor
-	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, boolean markFailed, boolean showResults) {
+	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String fileLocation, @CheckForNull String exporter, @CheckForNull String args, @CheckForNull String format, @CheckForNull String nodePath, boolean markFailed, boolean showResults) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
+		this.mdsName = mdsName;
 		this.fileLocation=fileLocation;
-		this.nodePath=nodePath;
+		this.exporter=exporter;
+		this.args=args;
 		this.format=format;
 		this.markFailed = markFailed;
 		this.showResults = showResults;
@@ -80,13 +85,20 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 		return actionName;
 	}
 
-
+	public String getMdsName() {
+		return mdsName;
+	}
+		
 	public String getFileLocation() {
 		return fileLocation;
 	}
 	
-	public String getNodePath() {
-		return nodePath;
+	public String getExporter() {
+		return exporter;
+	}
+	
+	public String getArgs() {
+		return args;
 	}
 	
 	public String getFormat() {
@@ -127,15 +139,15 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
-		loggerUtils.info("Executing SWEAGLE Upload " + actionName + " at: " + sweagleURL);
+		loggerUtils.info("Executing SWEAGLE Export" + actionName + " at: " + sweagleURL);
 		
 		
 		String actionResonse = null;
 		
-			nodePath = env.expand(nodePath);
+			args = env.expand(args);
 			fileLocation = env.expand(fileLocation);
 			
-			actionResonse = SweagleUtils.exportConfig(sweagleURL, sweagleAPIkey, fileLocation,  exporter, listener);
+			actionResonse = SweagleUtils.exportConfig(sweagleURL, sweagleAPIkey, mdsName, fileLocation,  exporter, args, format, markFailed, listener);
 
 		
 		

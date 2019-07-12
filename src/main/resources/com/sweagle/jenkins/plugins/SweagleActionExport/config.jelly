@@ -2,11 +2,17 @@
 <j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
     <f:entry title="Action Name" field="actionName">
         <f:textbox checkMethod="post" />
+    </f:entry>     
+    <f:entry title="MDS Name" field="mdsName">
+        <f:textbox checkMethod="post" />
     </f:entry>
     <f:entry title="File Location" field="fileLocation">
         <f:textbox checkMethod="post" />
     </f:entry>
-     <f:entry title="Node Path" field="nodePath">
+    <f:entry title="Exporter" field="exporter">
+        <f:textbox checkMethod="post" />
+    </f:entry>
+    <f:entry title="Variables Input" field="args">
         <f:textbox checkMethod="post" />
     </f:entry>
        <f:entry name="format" title="Choose file format" field="format">

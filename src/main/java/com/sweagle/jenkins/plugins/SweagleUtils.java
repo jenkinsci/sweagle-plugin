@@ -6,8 +6,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,11 +147,51 @@ public class SweagleUtils {
 		return responseString;
 	}
 
-	static String exportConfig(String sweagleURL, Secret sweagleAPIkey, String exporter, String format, TaskListener listener) {
+	static String exportConfig(String sweagleURL, Secret sweagleAPIkey, String mdsName, String fileLocation, String exporter, String args, String format, boolean markFailed, TaskListener listener) throws AbortException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
-		loggerUtils.info("Exporting from " + sweagleURL + " with exporter " + exporter+" in format "+format);
+		loggerUtils.info("Exporting from " + mdsName + " with exporter " + exporter+" in format "+format+" at "+ sweagleURL);
 		String responseString = null;
+		OkHttpClient client = new OkHttpClient();
+		Response response = null;
+
+		MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+		RequestBody body = RequestBody.create(mediaType, "mds="+mdsName+"&parser="+exporter+"&args="+args+"&format="+format);
+		Request request = new Request.Builder()
+		  .url(sweagleURL + "/api/v1/tenant/metadata-parser/parse")
+		  .post(body)
+		  .addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
+		  .addHeader("Accept", "*/*")
+		  .addHeader("content-type", "application/x-www-form-urlencoded")
+		  .addHeader("accept-encoding", "gzip, deflate")
+		  .addHeader("Connection", "keep-alive")
+		  .addHeader("cache-control", "no-cache")
+		  .build();
+
+		try {
+			response = client.newCall(request).execute();
+			responseString = response.body().string();
+			response.close();
+		} catch (Exception e) {
+			if (markFailed)
+				throw new AbortException(e.toString());
+			else 
+				loggerUtils.error(e.toString());
+		}
+		
+		String content=responseString;
+		
+		try {
+			Files.write(Paths.get(fileLocation), content.getBytes(StandardCharsets.UTF_8));
+		} catch (Exception e) {
+			if (markFailed)
+				throw new AbortException(e.toString());
+			else 
+				loggerUtils.error(e.toString());
+		}
+		
+		
+		
 		return responseString;
 	}
 	
