@@ -9,15 +9,16 @@
 		<relativePath />
 		<version>2.37</version>
 	</parent>
+	<groupid>io.jenkins.plugins</groupid>
 	<artifactId>sweagle</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<url>https://wiki.jenkins.io/display/JENKINS/SWEAGLE+Plugin</url>
 	<properties>
 		<jenkins.version>2.7.3</jenkins.version>
 	</properties>
 	<name>SWEAGLE Plugin</name>
-	<description>This plugin will check the status of a set of config data stored in SWEAGLE and mark the build unstable based on the results.</description>
+	<description>The SWEAGLE plugin allows you to checkin config data to SWEAGLE and validate it as a part of your CI/CD pipeline.</description>
 	<licenses>
 		<license>
 			<name>MIT License</name>

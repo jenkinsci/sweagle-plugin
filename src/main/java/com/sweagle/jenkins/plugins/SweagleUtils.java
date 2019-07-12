@@ -21,6 +21,8 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
 import hudson.AbortException;
+import hudson.EnvVars;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -73,17 +75,45 @@ public class SweagleUtils {
 
 	}
 
-	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileLocation, String nodePath, TaskListener listener ) {
+	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileLocation, String nodePath, String format, boolean markFailed, TaskListener listener, EnvVars env ) throws AbortException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Uploading Config from " + fileLocation + " to " + nodePath);
 		String responseString = null;
+		String content = null;
 		try {
-			String content = readFile(fileLocation, Charset.defaultCharset());
+			content = readFile(env.get("WORKSPACE")+"/"+fileLocation, Charset.defaultCharset());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			if (markFailed)
+				throw new AbortException(e.toString());
+			else 
+				loggerUtils.error(e.toString());
 		}
+		OkHttpClient client = new OkHttpClient();
+
+		MediaType mediaType = MediaType.parse("text/plain");
+		RequestBody body = RequestBody.create(mediaType, content);
+		Request request = new Request.Builder()
+		  .url(sweagleURL +"/api/v1/data/bulk-operations/dataLoader/upload?nodePath="+nodePath+"&format="+format+"&allowDelete=false&autoApprove=true&storeSnapshotResults=false&validationLevel=error")
+		  .post(body)
+		  .addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
+		  .addHeader("Accept", "*/*")
+		  .addHeader("Cache-Control", "no-cache")
+		  .addHeader("Connection", "keep-alive")
+		  .build();
+
+		try {
+			Response response = client.newCall(request).execute();
+			responseString = response.body().string();
+			response.close();
+		} catch (IOException e) {
+			if (markFailed)
+				throw new AbortException(e.toString());
+			else 
+				loggerUtils.error(e.toString());
+		}
+		
+		
 		return responseString;
 	}
 
@@ -115,8 +145,12 @@ public class SweagleUtils {
 		return responseString;
 	}
 
-	static boolean exportConfig(String mdsName, String exporter, String format) {
-		return true;
+	static String exportConfig(String sweagleURL, Secret sweagleAPIkey, String exporter, String format, TaskListener listener) {
+		PrintStream logger = listener.getLogger();
+		LoggerUtils loggerUtils = new LoggerUtils(logger);
+		loggerUtils.info("Exporting from " + sweagleURL + " with exporter " + exporter+" in format "+format);
+		String responseString = null;
+		return responseString;
 	}
 	
 	static String readFile(String path, Charset encoding) 

@@ -57,6 +57,9 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	
 	@CheckForNull
 	private String format;
+	
+	@CheckForNull
+	private String exporter;
 
 	private boolean markFailed;
 	private boolean showResults;
@@ -131,7 +134,8 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 		
 			nodePath = env.expand(nodePath);
 			fileLocation = env.expand(fileLocation);
-			actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocation,  nodePath, listener);
+			
+			actionResonse = SweagleUtils.exportConfig(sweagleURL, sweagleAPIkey, fileLocation,  exporter, listener);
 
 		
 		

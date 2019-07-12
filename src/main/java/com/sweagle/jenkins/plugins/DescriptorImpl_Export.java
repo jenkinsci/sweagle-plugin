@@ -24,21 +24,9 @@
 
 package com.sweagle.jenkins.plugins;
 
-import java.io.File;
-
-
-
 import org.jenkinsci.Symbol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.DocumentBuilder;
-import org.w3c.dom.Document;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Node;
-import org.w3c.dom.Element;
-import java.io.File;
 
 import hudson.Extension;
 import hudson.model.AbstractProject;
@@ -52,10 +40,7 @@ import hudson.util.Secret;
 @Symbol("SWEAGLEExport")
 public final class DescriptorImpl_Export extends BuildStepDescriptor<Builder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweagleActionExport.class);
-    private String sweagleURL;
-    private Secret sweagleAPIkey;
-    
-     
+         
     public DescriptorImpl_Export() {
         super(SweagleActionExport.class);
        
