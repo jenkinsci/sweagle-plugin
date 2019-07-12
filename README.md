@@ -20,15 +20,15 @@ Test the connection before saving.  A successful connection will show the amount
 
 ## Validate Build Step
 
-![validate](/Users/joeo/eclipse-workspace/sweagle-jenkins-plugin/screenshots/validate.png)
+![validate](screenshots/validate.png)
 
 
 
 ## Snapshot Build Step
 
-![snapshot](/Users/joeo/eclipse-workspace/sweagle-jenkins-plugin/screenshots/snapshot.png)
+![snapshot](screenshots/snapshot.png)
 
 ## Export Build Step
 
-![export](/Users/joeo/eclipse-workspace/sweagle-jenkins-plugin/screenshots/export.png)
+![export](screenshots/export.png)
 
