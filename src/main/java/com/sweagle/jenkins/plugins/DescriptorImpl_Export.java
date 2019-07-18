@@ -56,7 +56,7 @@ public final class DescriptorImpl_Export extends BuildStepDescriptor<Builder> {
 
     @Override
     public String getDisplayName() {
-        return "SWEAGLE Export";
+        return "SWEAGLE Get Config";
     }
 
     public String getSweagleURL() {

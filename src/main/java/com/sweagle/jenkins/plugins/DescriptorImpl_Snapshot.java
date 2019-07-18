@@ -37,7 +37,7 @@ import hudson.util.Secret;
 //DescriptorImpl governs the global config settings
 
 @Extension
-@Symbol("SWEAGLEUpdload")
+@Symbol("SWEAGLESnapshot")
 public final class DescriptorImpl_Snapshot extends BuildStepDescriptor<Builder> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SweagleActionSnapshot.class);
     

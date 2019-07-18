@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +39,11 @@ public class SweagleUtils {
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
-		OkHttpClient client = new OkHttpClient();
+		OkHttpClient client = new OkHttpClient().newBuilder()
+		.connectTimeout(60, TimeUnit.SECONDS)
+        .writeTimeout(60, TimeUnit.SECONDS)
+        .readTimeout(60, TimeUnit.SECONDS)
+        .build();
 		Response response = null;
 		loggerUtils.info("Checking MDS Validity: " + mdsName);
 
@@ -92,7 +97,7 @@ public class SweagleUtils {
 				loggerUtils.error(e.toString());
 		}
 		OkHttpClient client = new OkHttpClient();
-
+		
 		MediaType mediaType = MediaType.parse("text/plain");
 		RequestBody body = RequestBody.create(mediaType, content);
 		Request request = new Request.Builder()
@@ -163,7 +168,6 @@ public class SweagleUtils {
 		  .addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
 		  .addHeader("Accept", "*/*")
 		  .addHeader("content-type", "application/x-www-form-urlencoded")
-		  .addHeader("accept-encoding", "gzip, deflate")
 		  .addHeader("Connection", "keep-alive")
 		  .addHeader("cache-control", "no-cache")
 		  .build();
@@ -195,6 +199,40 @@ public class SweagleUtils {
 		return responseString;
 	}
 	
+	static boolean validateProgress(String mdsName, String sweagleURL, Secret sweagleAPIkey,  boolean markFailed, TaskListener listener) throws AbortException, InterruptedException  {
+		PrintStream logger = listener.getLogger();
+		LoggerUtils loggerUtils = new LoggerUtils(logger);
+		String responseString = null;
+		OkHttpClient client = new OkHttpClient();
+		Response response = null;
+		Request request = new Request.Builder()
+				  .url(sweagleURL + "/api/v1/data/include/validation_progress?name=" + mdsName+ "&forIncoming=true")
+				  .get()
+				  .addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
+				  .addHeader("Accept", "*/*")
+				  .build();
+
+		try {
+			response = client.newCall(request).execute();
+			responseString = response.body().string();
+			response.close();
+		} catch (Exception e) {
+			if (markFailed)
+				throw new AbortException(e.toString());
+			else 
+				loggerUtils.error(e.toString());
+		}
+		
+		if (responseString != "Finished")
+		{
+			loggerUtils.info("Checking validation progress for " + mdsName + "status:" + responseString);
+			return true;
+			
+		}
+		loggerUtils.info("Checking validation progress for " + mdsName + "status:" + responseString);
+		return false;
+		}
+		
 	static String readFile(String path, Charset encoding) 
 			  throws IOException 
 			{

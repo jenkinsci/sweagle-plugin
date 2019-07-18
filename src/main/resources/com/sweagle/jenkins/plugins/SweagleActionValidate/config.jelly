@@ -3,14 +3,7 @@
     <f:entry title="Action Name" field="actionName">
         <f:textbox checkMethod="post" />
     </f:entry>
-	<f:entry name="actionType" title="Choose Action Type" field="actionType">
-    <select name="actionType">
-        <option value="uploadConfig"  selected="${instance.actionType.equals('uploadConfig')? 'true':null}">Upload Config</option>
-        <option value="validateConfig" selected="${instance.actionType.equals('validateConfig')? 'true':null}">Validate Config</option>
-        <option value="snapshotConfig" selected="${instance.actionType.equals('snapshotConfig')? 'true':null}">Snapshot Config</option>
-        <option value="exportConfig" selected="${instance.actionType.equals('exportConfig')? 'true':null}">Export Config</option>
-    </select>
-    </f:entry>
+
     <f:entry title="MDS Name" field="mdsName">
         <f:textbox checkMethod="post" />
     </f:entry>
