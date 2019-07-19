@@ -29,10 +29,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hudson.Extension;
+import hudson.Plugin;
 import hudson.model.AbstractProject;
+import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
 import hudson.util.Secret;
+import jenkins.model.Jenkins;
 
 //DescriptorImpl governs the global config settings
 
@@ -48,9 +51,9 @@ public final class DescriptorImpl_Upload extends BuildStepDescriptor<Builder> {
        
     }
     
-
-    DescriptorImpl_Validate descriptor = new DescriptorImpl_Validate();   
-
+     
+    
+    
 
     @Override
     public boolean isApplicable(Class<? extends AbstractProject> aClass) {
@@ -62,13 +65,7 @@ public final class DescriptorImpl_Upload extends BuildStepDescriptor<Builder> {
         return "SWEAGLE Upload";
     }
 
-    public String getSweagleURL() {
-        return descriptor.getSweagleURL();
-    }
 
-    public Secret getSweagleAPIkey() {
-        return descriptor.getSweagleAPIkey();
-    }
 
 
    

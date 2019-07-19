@@ -39,6 +39,7 @@ import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
 import hudson.util.Secret;
+import jenkins.model.Jenkins;
 import jenkins.tasks.SimpleBuildStep;
 
 /**
@@ -66,7 +67,9 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	
 	private boolean markFailed;
 	private boolean showResults;
-
+	
+	
+	
 	@DataBoundConstructor
 	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String fileLocation, @CheckForNull String exporter, @CheckForNull String args, @CheckForNull String format, @CheckForNull String nodePath, boolean markFailed, boolean showResults) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
@@ -133,7 +136,8 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	public void perform(Run<?, ?> run, FilePath workspace, Launcher launcher, TaskListener listener)
 			throws InterruptedException, IOException {
 		final EnvVars env = run.getEnvironment(listener);
-		DescriptorImpl_Export descriptorImpl = getDescriptor();
+		Jenkins jenkins = Jenkins.getInstance();
+		DescriptorImpl_Validate descriptorImpl = jenkins.getDescriptorByType(DescriptorImpl_Validate.class);
 		String sweagleURL = descriptorImpl.getSweagleURL();
 		Secret sweagleAPIkey = descriptorImpl.getSweagleAPIkey();
 

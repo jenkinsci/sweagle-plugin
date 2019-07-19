@@ -56,6 +56,8 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	private int errMax;
 	private boolean markFailed;
 	private boolean showResults;
+	
+	
 
 	@DataBoundConstructor
 	public SweagleActionValidate(@CheckForNull String actionName, @CheckForNull String actionType, @CheckForNull String mdsName,

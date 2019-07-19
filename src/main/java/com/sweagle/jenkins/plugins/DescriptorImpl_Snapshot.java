@@ -48,7 +48,7 @@ public final class DescriptorImpl_Snapshot extends BuildStepDescriptor<Builder> 
     }
     
 // there could be a better way to get the config from another descriptor
-    DescriptorImpl_Validate descriptor = new DescriptorImpl_Validate();
+
     @Override
     public boolean isApplicable(Class<? extends AbstractProject> aClass) {
         return true;
@@ -58,15 +58,6 @@ public final class DescriptorImpl_Snapshot extends BuildStepDescriptor<Builder> 
     public String getDisplayName() {
         return "SWEAGLE Snapshot";
     }
-
-    public String getSweagleURL() {
-        return descriptor.getSweagleURL();
-    }
-
-    public Secret getSweagleAPIkey() {
-        return descriptor.getSweagleAPIkey();
-    }
-
 
    
 }
