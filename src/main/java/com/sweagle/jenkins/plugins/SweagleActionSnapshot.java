@@ -133,11 +133,11 @@ public class SweagleActionSnapshot extends hudson.tasks.Builder implements Simpl
 		
 		String actionResonse = null;
 		//Resolve variables with env.expand()
-			description = env.expand(description);
-			tag = env.expand(tag);
-			mdsName = env.expand(mdsName);
+			String descriptionEnv = env.expand(description);
+			String tagEnv = env.expand(tag);
+			String mdsNameEnv = env.expand(mdsName);
 			
-			actionResonse = SweagleUtils.snapshotConfig(mdsName, sweagleURL, sweagleAPIkey, description,  tag, listener);
+			actionResonse = SweagleUtils.snapshotConfig(mdsNameEnv, sweagleURL, sweagleAPIkey, descriptionEnv,  tagEnv, listener);
 
 		
 		

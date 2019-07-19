@@ -134,13 +134,13 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Executing SWEAGLE Validate Action: " + actionName + " at: " + sweagleURL);
 		
-		mdsName = env.expand(mdsName);
+		String mdsNameExp = env.expand(mdsName);
 		
 		String actionResonse = null;
 			
 			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener))
 				Thread.sleep(15000);
-			actionResonse = SweagleUtils.validateConfig(mdsName, sweagleURL, sweagleAPIkey, markFailed, warnMax, errMax, listener, showResults, run );
+			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed, warnMax, errMax, listener, showResults, run );
 		if (showResults)
 		loggerUtils.debug(actionResonse);
 		

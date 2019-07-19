@@ -147,11 +147,11 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 		
 		
 		String actionResonse = null;
-		
-			args = env.expand(args);
-			fileLocation = env.expand(fileLocation);
+			String mdsNameEnv = env.expand(mdsName);
+			String argsEnv = env.expand(args);
+			String fileLocationEnv = env.expand(fileLocation);
 			
-			actionResonse = SweagleUtils.exportConfig(sweagleURL, sweagleAPIkey, mdsName, fileLocation,  exporter, args, format, markFailed, listener, env);
+			actionResonse = SweagleUtils.exportConfig(sweagleURL, sweagleAPIkey, mdsNameEnv, fileLocationEnv,  exporter, argsEnv, format, markFailed, listener, env);
 
 		
 		

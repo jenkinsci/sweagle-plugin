@@ -36,7 +36,7 @@ public class SweagleUtils {
 
 	static String validateConfig(String mdsName, String sweagleURL, Secret sweagleAPIkey, boolean markFailed,
 			int warnMax, int errMax, TaskListener listener, boolean showResults, Run<?, ?> run)
-			throws InterruptedException, AbortException {
+			throws InterruptedException, IOException {
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
@@ -44,7 +44,8 @@ public class SweagleUtils {
 				.writeTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).build();
 		Response response = null;
 		loggerUtils.info("Checking MDS Validity: " + mdsName);
-
+		final EnvVars env = run.getEnvironment(listener);
+		mdsName = env.expand(mdsName);
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/include/validate?name=" + mdsName
 						+ "&forIncoming=true&withCustomValidations=true")
@@ -127,6 +128,7 @@ public class SweagleUtils {
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Creating Snapshot from pending data for " + mdsName);
 		String responseString = null;
+		
 
 		OkHttpClient client = new OkHttpClient();
 		Response response = null;
