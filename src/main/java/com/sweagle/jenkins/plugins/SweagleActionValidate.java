@@ -137,9 +137,10 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		String mdsNameExp = env.expand(mdsName);
 		
 		String actionResonse = null;
-			
-			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener))
+		int retry=1;
+			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)&&retry<10) {
 				Thread.sleep(15000);
+				retry ++;}
 			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed, warnMax, errMax, listener, showResults, run );
 		if (showResults)
 		loggerUtils.debug(actionResonse);

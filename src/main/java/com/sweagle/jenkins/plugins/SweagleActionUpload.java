@@ -131,11 +131,13 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Executing SWEAGLE Upload " + actionName + " at: " + sweagleURL);
 		
+		String fileLocationExp = env.expand(fileLocation);
+		String nodePathExp = env.expand(nodePath);
 		
 		String actionResonse = null;
 		
 			
-			actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocation,  nodePath, format, markFailed, listener, env);
+		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, markFailed, listener, env);
 
 		
 		
