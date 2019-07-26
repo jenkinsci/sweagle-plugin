@@ -31,6 +31,8 @@ import java.io.PrintStream;
 import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -56,16 +58,20 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	private int errMax;
 	private boolean markFailed;
 	private boolean showResults;
+	long retryInterval;
+	int retryCount;
 	
 	
 
 	@DataBoundConstructor
 	public SweagleActionValidate(@CheckForNull String actionName, @CheckForNull String actionType, @CheckForNull String mdsName,
-			@CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String exporter, int warnMax, int errMax, @CheckForNull String description, @CheckForNull String tag) {
+			@CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String exporter, int warnMax, int errMax, @CheckForNull String description, @CheckForNull String tag, int retryCount, long retryInterval) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.mdsName = mdsName;
 		this.warnMax = warnMax;
 		this.errMax = errMax;
+		this.retryCount = retryCount;
+		this.retryInterval = retryInterval;
 	}
 
 
@@ -93,6 +99,14 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	
 	public int getWarnMax() {
 		return warnMax;
+	}
+	
+	public long getRetryInterval() {
+		return retryInterval;
+	}
+	
+	public int getRetryCount() {
+		return retryCount;
 	}
 	
 	public int getErrMax() {
@@ -137,11 +151,19 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		String mdsNameExp = env.expand(mdsName);
 		
 		String actionResonse = null;
-		int retry=1;
-			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)&&retry<10) {
-				Thread.sleep(15000);
+		int retry=2;
+		
+			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)&&(retry<retryCount||retryCount==-1)) {
+				Thread.sleep(retryInterval*1000);
 				retry ++;}
+			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener))
 			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed, warnMax, errMax, listener, showResults, run );
+			else {
+				if (markFailed)
+					throw new AbortException("Pending data for " + mdsNameExp + " not found.");
+				else 
+					loggerUtils.info("Pending data for " + mdsNameExp + " not found.");	
+			}
 		if (showResults)
 		loggerUtils.debug(actionResonse);
 		

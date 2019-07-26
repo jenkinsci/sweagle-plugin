@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.jenkins-ci.plugins</groupId>
@@ -9,7 +11,7 @@
 	</parent>
 	<groupId>io.jenkins.plugins</groupId>
 	<artifactId>sweagle</artifactId>
-	<version>0.66-SNAPSHOT</version>
+	<version>0.67-SNAPSHOT</version>
 	<packaging>hpi</packaging>
 	<url>https://wiki.jenkins.io/display/JENKINS/SWEAGLE+Plugin</url>
 	<properties>
@@ -71,18 +73,20 @@
 			<version>2.14</version>
 			<scope>test</scope>
 		</dependency>
-		  <dependency>
-        	<groupId>org.influxdb</groupId>
-        	<artifactId>influxdb-java</artifactId>
-        	<version>2.5</version>
-        </dependency>
-        <dependency>
-    		<groupId>com.jayway.jsonpath</groupId>
-    		<artifactId>json-path</artifactId>
-    		<version>2.4.0</version>
- 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>3.4.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.jayway.jsonpath</groupId>
+			<artifactId>json-path</artifactId>
+			<version>2.4.0</version>
+		</dependency>
 	</dependencies>
-	
+
 	<developers>
 		<developer>
 			<id>joe99000</id>
@@ -90,7 +94,6 @@
 			<email>mail@joeoffenberg.com</email>
 		</developer>
 	</developers>
-
 	<scm>
 		<connection>scm:git:ssh://github.com/jenkinsci/sweagle-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/sweagle-plugin.git</developerConnection>
