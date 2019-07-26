@@ -58,19 +58,21 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	
 	@CheckForNull
 	private String format;
-
+	private boolean withDelete;
 	private boolean markFailed;
 	private boolean showResults;
+
 	
 	
 
 
 	@DataBoundConstructor
-	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, boolean markFailed, boolean showResults) {
+	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, boolean withDelete, boolean markFailed, boolean showResults) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.fileLocation=fileLocation;
 		this.nodePath=nodePath;
 		this.format=format;
+		this.withDelete = withDelete;
 		this.markFailed = markFailed;
 		this.showResults = showResults;
 				
@@ -92,6 +94,10 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	
 	public String getFormat() {
 		return format;
+	}
+	
+	public boolean getWithDelete() {
+		return withDelete;
 	}
 	
 	public boolean getMarkFailed() {
@@ -137,7 +143,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		String actionResonse = null;
 		
 			
-		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, markFailed, listener, env);
+		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, withDelete, markFailed, listener, env);
 
 		
 		

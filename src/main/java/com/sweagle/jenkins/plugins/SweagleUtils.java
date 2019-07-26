@@ -3,23 +3,15 @@ package com.sweagle.jenkins.plugins;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.lang.Thread.UncaughtExceptionHandler;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.concurrent.TimeUnit;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.jayway.jsonpath.JsonPath;
-
-import hudson.model.Build;
-import hudson.model.Executor;
-import hudson.model.Result;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
@@ -33,6 +25,11 @@ import okhttp3.Response;
 
 public class SweagleUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SweagleUtils.class);
+	static OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(60, TimeUnit.SECONDS)
+			.readTimeout(60, TimeUnit.SECONDS)
+			.writeTimeout(60, TimeUnit.SECONDS)
+			.build();
+	
 
 	static String validateConfig(String mdsName, String sweagleURL, Secret sweagleAPIkey, boolean markFailed,
 			int warnMax, int errMax, TaskListener listener, boolean showResults, Run<?, ?> run)
@@ -40,8 +37,7 @@ public class SweagleUtils {
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
-		OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(60, TimeUnit.SECONDS)
-				.writeTimeout(60, TimeUnit.SECONDS).readTimeout(60, TimeUnit.SECONDS).build();
+
 		Response response = null;
 		loggerUtils.info("Checking MDS Validity: " + mdsName);
 		final EnvVars env = run.getEnvironment(listener);
@@ -82,7 +78,7 @@ public class SweagleUtils {
 	}
 
 	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileLocation, String nodePath,
-			String format, boolean markFailed, TaskListener listener, EnvVars env) throws AbortException {
+			String format, boolean withDelete, boolean markFailed, TaskListener listener, EnvVars env) throws AbortException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Uploading Config from " + fileLocation + " to " + nodePath);
@@ -96,14 +92,14 @@ public class SweagleUtils {
 			else
 				loggerUtils.error(e.toString());
 		}
-		OkHttpClient client = new OkHttpClient();
+		
 
 		MediaType mediaType = MediaType.parse("text/plain");
 		RequestBody body = RequestBody.create(mediaType, content);
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/bulk-operations/dataLoader/upload?nodePath=" + nodePath + "&format="
 						+ format
-						+ "&allowDelete=false&autoApprove=true&storeSnapshotResults=false&validationLevel=error")
+						+ "&allowDelete="+withDelete+"&autoApprove=true&storeSnapshotResults=false&validationLevel=error")
 				.post(body).addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
 				.addHeader("Accept", "*/*").addHeader("Cache-Control", "no-cache").addHeader("Connection", "keep-alive")
 				.build();
@@ -129,8 +125,6 @@ public class SweagleUtils {
 		loggerUtils.info("Creating Snapshot from pending data for " + mdsName);
 		String responseString = null;
 		
-
-		OkHttpClient client = new OkHttpClient();
 		Response response = null;
 		RequestBody body = RequestBody.create(null, new byte[0]);
 		Request request = new Request.Builder()
@@ -160,7 +154,6 @@ public class SweagleUtils {
 		loggerUtils.info("Exporting from " + mdsName + " with exporter " + exporter + " in format " + format + " at "
 				+ sweagleURL);
 		String responseString = null;
-		OkHttpClient client = new OkHttpClient();
 		Response response = null;
 
 		MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
@@ -201,7 +194,6 @@ public class SweagleUtils {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		String responseString = null;
-		OkHttpClient client = new OkHttpClient();
 		Response response = null;
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/include/validation_progress?name=" + mdsName + "&forIncoming=true")
