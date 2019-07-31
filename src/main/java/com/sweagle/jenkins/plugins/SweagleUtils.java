@@ -78,7 +78,7 @@ public class SweagleUtils {
 	}
 
 	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileLocation, String nodePath,
-			String format, boolean withDelete, boolean markFailed, TaskListener listener, EnvVars env) throws AbortException {
+			String format, boolean withDelete, boolean withSnapshot, boolean onlyParent, String tag, String description, boolean markFailed,  TaskListener listener, EnvVars env) throws AbortException, UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Uploading Config from " + fileLocation + " to " + nodePath);
@@ -97,9 +97,15 @@ public class SweagleUtils {
 		MediaType mediaType = MediaType.parse("text/plain");
 		RequestBody body = RequestBody.create(mediaType, content);
 		Request request = new Request.Builder()
-				.url(sweagleURL + "/api/v1/data/bulk-operations/dataLoader/upload?nodePath=" + nodePath + "&format="
-						+ format
-						+ "&allowDelete="+withDelete+"&autoApprove=true&storeSnapshotResults=false&validationLevel=error")
+				.url(sweagleURL + "/api/v1/data/bulk-operations/dataLoader/upload?nodePath=" + nodePath 
+						+ "&format="+format
+						+ "&allowDelete="+withDelete
+						+"&autoApprove=true&storeSnapshotResults="+withSnapshot
+						+"&validationLevel=error"
+						+"autoRetry=true"
+						+"&onlyParent="+onlyParent
+						+"&tag="+URLEncoder.encode(tag, "UTF-8").replace("+", "%20")
+						+"&description="+URLEncoder.encode(description, "UTF-8").replace("+", "%20"))
 				.post(body).addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
 				.addHeader("Accept", "*/*").addHeader("Cache-Control", "no-cache").addHeader("Connection", "keep-alive")
 				.build();

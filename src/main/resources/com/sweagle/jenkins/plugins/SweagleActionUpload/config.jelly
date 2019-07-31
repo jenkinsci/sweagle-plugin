@@ -22,11 +22,22 @@
     <f:entry title="Allow Delete" field="withDelete">
         <f:checkbox/>
     </f:entry>
+        <f:entry title="Only Parent" field="onlyParent">
+        <f:checkbox/>
+    </f:entry>
+     <f:optionalBlock name="withSnapshot" title="Upload with Snapshot" inline="true" checked="${instance.withSnapshot}">
+      	<f:entry title="Snapshot Description" field="description">
+        	<f:textbox checkMethod="post" />
+    	</f:entry>
+  		<f:entry title="Snapshot Tag" field="tag">
+        	<f:textbox checkMethod="post" />
+    	</f:entry>
+      </f:optionalBlock>
     <f:entry title="Fail build on failed upload" field="markFailed">
         <f:checkbox/>
     </f:entry>
  	<f:entry title="Show API responses in console log" field="showResults">
         <f:checkbox/>
     </f:entry>
-
+	
 </j:jelly>

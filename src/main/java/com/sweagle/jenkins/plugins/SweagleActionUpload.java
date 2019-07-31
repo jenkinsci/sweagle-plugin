@@ -59,20 +59,30 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	@CheckForNull
 	private String format;
 	private boolean withDelete;
+	private boolean onlyParent;
+	private boolean withSnapshot;
+	private String tag;
+	private String description;
 	private boolean markFailed;
 	private boolean showResults;
+	
 
 	
 	
 
 
 	@DataBoundConstructor
-	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, boolean withDelete, boolean markFailed, boolean showResults) {
+	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, 
+			boolean withDelete, boolean markFailed, String tag, String description,  boolean showResults, boolean onlyParent, boolean withSnapshot) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.fileLocation=fileLocation;
 		this.nodePath=nodePath;
 		this.format=format;
 		this.withDelete = withDelete;
+		this.onlyParent = onlyParent;
+		this.withSnapshot = withSnapshot;
+		this.tag = tag;
+		this.description = description;
 		this.markFailed = markFailed;
 		this.showResults = showResults;
 				
@@ -98,6 +108,22 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	
 	public boolean getWithDelete() {
 		return withDelete;
+	}
+	
+	public boolean getOnlyParent() {
+		return onlyParent;
+	}
+	
+	public boolean getWithSnapshot() {
+		return withSnapshot;
+	}
+	
+	public String getTag() {
+		return tag;
+	}
+	
+	public String getDescription() {
+		return description;
 	}
 	
 	public boolean getMarkFailed() {
@@ -139,11 +165,13 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		
 		String fileLocationExp = env.expand(fileLocation);
 		String nodePathExp = env.expand(nodePath);
+		String descriptionEnv = env.expand(description);
+		String tagEnv = env.expand(tag);
 		
 		String actionResonse = null;
 		
 			
-		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, withDelete, markFailed, listener, env);
+		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, withDelete, withSnapshot, onlyParent, tagEnv, descriptionEnv, markFailed, listener, env);
 
 		
 		

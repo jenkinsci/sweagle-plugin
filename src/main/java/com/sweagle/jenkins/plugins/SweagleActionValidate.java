@@ -149,7 +149,8 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		loggerUtils.info("Executing SWEAGLE Validate Action: " + actionName + " at: " + sweagleURL);
 		
 		String mdsNameExp = env.expand(mdsName);
-		
+		if (retryInterval<10)
+			retryInterval=10;
 		String actionResonse = null;
 		int retry=2;
 		

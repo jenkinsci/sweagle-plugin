@@ -8,20 +8,20 @@
         <f:textbox checkMethod="post" />
     </f:entry>
     <f:entry title="Retry Count" field="retryCount">
-        <f:textbox checkMethod="post" />
+        <f:number checkMethod="post" default="5" />
     </f:entry>
        <f:entry title="Retry Interval (seconds)" field="retryInterval">
-        <f:textbox checkMethod="post" />
+        <f:number checkMethod="post" default="30" minimum="15"  />
     </f:entry>
     <f:block>
     <table>
     
       <f:optionalBlock name="markFailed" title="Fail build on validate errors" inline="true" checked="${instance.markFailed}">
   <f:entry title="Warning Threshold" field="warnMax">
-        <f:textbox checkMethod="post" />
+        <f:number checkMethod="post" />
     </f:entry>
      <f:entry title="Error Threshold" field="errMax">
-        <f:textbox checkMethod="post" />
+        <f:number checkMethod="post" />
     </f:entry>
       </f:optionalBlock>
         
