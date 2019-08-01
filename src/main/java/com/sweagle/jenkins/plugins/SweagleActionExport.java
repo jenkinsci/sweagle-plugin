@@ -71,7 +71,7 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	
 	
 	@DataBoundConstructor
-	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String fileLocation, @CheckForNull String exporter, @CheckForNull String args, @CheckForNull String format, @CheckForNull String nodePath, boolean markFailed, boolean showResults) {
+	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String fileLocation, @CheckForNull String exporter, @CheckForNull String args, @CheckForNull String format,  boolean markFailed, boolean showResults) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.mdsName = mdsName;
 		this.fileLocation=fileLocation;
