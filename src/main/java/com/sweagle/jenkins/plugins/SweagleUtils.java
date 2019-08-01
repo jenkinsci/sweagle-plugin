@@ -78,14 +78,18 @@ public class SweagleUtils {
 	}
 
 	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileLocation, String nodePath,
-			String format, boolean withDelete, boolean withSnapshot, boolean onlyParent, String tag, String description, boolean markFailed,  TaskListener listener, EnvVars env) throws AbortException, UnsupportedEncodingException {
+			String format, boolean allowDelete, boolean withSnapshot, boolean onlyParent, String tag, String description, boolean markFailed,  TaskListener listener, EnvVars env) throws AbortException, UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Uploading Config from " + fileLocation + " to " + nodePath);
 		String responseString = null;
 		String content = null;
 		try {
+			if (env.get("WORKSPACE")!=null)
 			content = readFile(env.get("WORKSPACE") + "/" + fileLocation, Charset.defaultCharset());
+			else {
+			content = readFile(fileLocation, Charset.defaultCharset());
+			}
 		} catch (IOException e) {
 			if (markFailed)
 				throw new AbortException(e.toString());
@@ -99,7 +103,7 @@ public class SweagleUtils {
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/bulk-operations/dataLoader/upload?nodePath=" + nodePath 
 						+ "&format="+format
-						+ "&allowDelete="+withDelete
+						+ "&allowDelete="+allowDelete
 						+"&autoApprove=true&storeSnapshotResults="+withSnapshot
 						+"&validationLevel=error"
 						+"autoRetry=true"
@@ -184,7 +188,11 @@ public class SweagleUtils {
 		String content = responseString;
 
 		try {
+			if (env.get("WORKSPACE")!=null)
 			Files.write(Paths.get(env.get("WORKSPACE") + "/" + fileLocation), content.getBytes(StandardCharsets.UTF_8));
+			else 
+			Files.write(Paths.get(fileLocation), content.getBytes(StandardCharsets.UTF_8));
+			
 		} catch (Exception e) {
 			if (markFailed)
 				throw new AbortException(e.toString());

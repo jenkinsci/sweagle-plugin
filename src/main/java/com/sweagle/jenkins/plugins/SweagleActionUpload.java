@@ -30,7 +30,6 @@ import java.io.PrintStream;
 
 import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
-import org.kohsuke.stapler.DataBoundSetter;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -58,7 +57,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	
 	@CheckForNull
 	private String format;
-	private boolean withDelete;
+	private boolean allowDelete;
 	private boolean onlyParent;
 	private boolean withSnapshot;
 	private String tag;
@@ -73,12 +72,12 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 
 	@DataBoundConstructor
 	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, 
-			boolean withDelete, boolean markFailed, String tag, String description,  boolean showResults, boolean onlyParent, boolean withSnapshot) {
+			boolean allowDelete, boolean markFailed, String tag, String description,  boolean showResults, boolean onlyParent, boolean withSnapshot) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.fileLocation=fileLocation;
 		this.nodePath=nodePath;
 		this.format=format;
-		this.withDelete = withDelete;
+		this.allowDelete = allowDelete;
 		this.onlyParent = onlyParent;
 		this.withSnapshot = withSnapshot;
 		this.tag = tag;
@@ -106,8 +105,8 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		return format;
 	}
 	
-	public boolean getWithDelete() {
-		return withDelete;
+	public boolean getAllowDelete() {
+		return allowDelete;
 	}
 	
 	public boolean getOnlyParent() {
@@ -171,7 +170,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		String actionResonse = null;
 		
 			
-		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, withDelete, withSnapshot, onlyParent, tagEnv, descriptionEnv, markFailed, listener, env);
+		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, allowDelete, withSnapshot, onlyParent, tagEnv, descriptionEnv, markFailed, listener, env);
 
 		
 		

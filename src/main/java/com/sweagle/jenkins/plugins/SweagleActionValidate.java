@@ -64,8 +64,8 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	
 
 	@DataBoundConstructor
-	public SweagleActionValidate(@CheckForNull String actionName, @CheckForNull String actionType, @CheckForNull String mdsName,
-			@CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String exporter, int warnMax, int errMax, @CheckForNull String description, @CheckForNull String tag, int retryCount, long retryInterval) {
+	public SweagleActionValidate(@CheckForNull String actionName,  @CheckForNull String mdsName,
+		int warnMax, int errMax, int retryCount, long retryInterval) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.mdsName = mdsName;
 		this.warnMax = warnMax;
