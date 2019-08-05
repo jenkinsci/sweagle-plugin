@@ -15,6 +15,7 @@ import com.jayway.jsonpath.JsonPath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
+import net.sf.json.JSONException;
 import hudson.AbortException;
 import hudson.EnvVars;
 import okhttp3.MediaType;
@@ -238,5 +239,20 @@ public class SweagleUtils {
 	static String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
+	}
+	
+	static String getErrorfromResponse(String responseAsString) {
+		String errorMessage="";
+		if (responseAsString.isEmpty()) {
+		return "";	
+		} else {
+		try {	
+		errorMessage = JsonPath.read(responseAsString, "$.error");
+		} catch (Exception e) {
+		errorMessage = "Not a valid response from SWEAGLE API "  + responseAsString;
+		}
+		
+		return errorMessage;
+		}
 	}
 }

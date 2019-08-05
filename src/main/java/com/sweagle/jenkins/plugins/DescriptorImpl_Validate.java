@@ -110,7 +110,8 @@ public final class DescriptorImpl_Validate extends BuildStepDescriptor<Builder> 
         // Admin permission check
         Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
         OkHttpClient client = new OkHttpClient();
-        String responseAsString = null;
+        String responseAsString = "";
+        int responseCode = 200;
         try {        
         	Request request = new Request.Builder()
         			  .url(sweagleURL + "/api/v1/data/report/count/metadataset")
@@ -120,25 +121,23 @@ public final class DescriptorImpl_Validate extends BuildStepDescriptor<Builder> 
 
         	Response response = client.newCall(request).execute();
         	responseAsString = response.body().string();
-        	int numMeasurements=JsonPath.read(responseAsString, "$.data[0].total");
-        			
-			LOGGER.info("Connection Successful. Found {} MDS", numMeasurements);
-            return FormValidation.ok("Connection Successful.  Found " + numMeasurements + " Metadata sets");
+        	responseCode = response.code();
 
         } catch (Exception e) {
             LOGGER.error("Error testing connection to url({}), error : {} \n response: " + responseAsString, sweagleURL,
                     e.getMessage());
             if (e.getMessage() != null) {
                 
-				return FormValidation.error(e, "API Connection error : " + e.getMessage() + "\n response:    " + responseAsString);
+				return FormValidation.error(e, "API Connection error : " + e.getMessage() + SweagleUtils.getErrorfromResponse(responseAsString));
             }
             return FormValidation.error(e, "Connection Error");
         } 
-        
-        
-        finally {
-           
-            }
+        if (responseCode==200) {
+    	int numMeasurements=JsonPath.read(responseAsString, "$.data[0].total");
+		LOGGER.debug("Connection Successful. Found {} MDS", numMeasurements);
+        return FormValidation.ok("Connection Successful.  Found " + numMeasurements + " Metadata sets");
+        } else 
+        return	FormValidation.error("Connection Error: " + SweagleUtils.getErrorfromResponse(responseAsString));
         }
    
 }
