@@ -118,6 +118,8 @@ public class SweagleUtils {
 		try {
 			Response response = client.newCall(request).execute();
 			responseString = response.body().string();
+			if (response.code() >299 && markFailed) {
+				throw new AbortException("Error " +response.code() + "  " +responseString);}
 			response.close();
 		} catch (IOException e) {
 			if (markFailed)
@@ -125,12 +127,12 @@ public class SweagleUtils {
 			else
 				loggerUtils.error(e.toString());
 		}
-
+		
 		return responseString;
 	}
 
 	static String snapshotConfig(String mdsName, String sweagleURL, Secret sweagleAPIkey, String description,
-			String tag, TaskListener listener) throws UnsupportedEncodingException {
+			String tag, boolean markFailed, TaskListener listener) throws UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Creating Snapshot from pending data for " + mdsName);
@@ -148,6 +150,8 @@ public class SweagleUtils {
 		try {
 			response = client.newCall(request).execute();
 			responseString = response.body().string();
+			if (response.code() >299 && markFailed) {
+				throw new AbortException("Error " +response.code() + "  " +responseString);}
 			response.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -178,6 +182,8 @@ public class SweagleUtils {
 		try {
 			response = client.newCall(request).execute();
 			responseString = response.body().string();
+			if (response.code() >299 && markFailed) {
+				throw new AbortException("Error " +response.code() + "  " +responseString);}
 			response.close();
 		} catch (Exception e) {
 			if (markFailed)
