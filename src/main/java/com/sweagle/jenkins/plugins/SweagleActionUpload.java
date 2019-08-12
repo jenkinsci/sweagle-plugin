@@ -30,6 +30,8 @@ import java.io.PrintStream;
 
 import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
+import org.kohsuke.stapler.DataBoundSetter;
+
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -57,13 +59,13 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	
 	@CheckForNull
 	private String format;
-	private boolean allowDelete;
-	private boolean onlyParent;
-	private boolean withSnapshot;
+	private boolean allowDelete = false;
+	private boolean onlyParent = false;
+	private boolean withSnapshot = false;
 	private String tag;
 	private String description;
-	private boolean markFailed;
-	private boolean showResults;
+	private boolean markFailed = false;
+	private boolean showResults = false;
 	
 
 	
@@ -71,23 +73,52 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 
 
 	@DataBoundConstructor
-	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath, 
-			boolean allowDelete, boolean markFailed, String tag, String description,  boolean showResults, boolean onlyParent, boolean withSnapshot) {
+	public SweagleActionUpload(@CheckForNull String actionName, @CheckForNull String fileLocation, @CheckForNull String format, @CheckForNull String nodePath) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.fileLocation=fileLocation;
 		this.nodePath=nodePath;
 		this.format=format;
-		this.allowDelete = allowDelete;
-		this.onlyParent = onlyParent;
-		this.withSnapshot = withSnapshot;
-		this.tag = tag;
-		this.description = description;
-		this.markFailed = markFailed;
-		this.showResults = showResults;
-				
+			
 	}
 
+	@DataBoundSetter
+	public void setAllowDelete(boolean allowDelete) {
+		this.allowDelete = allowDelete;
+	}
+	
+	@DataBoundSetter
+	public void setOnlyParent(boolean onlyParent) {
+		this.onlyParent = onlyParent;
+	}
+	
+	@DataBoundSetter
+	public void setWithSnapshot(boolean withSnapshot) {
+		this.withSnapshot = withSnapshot;
+	}
 
+	
+	@DataBoundSetter
+	public void setMarkFailed(boolean markFailed) {
+		this.markFailed = markFailed;
+	}
+
+	@DataBoundSetter
+	public void setShowResults(boolean showResults) {
+		this.showResults = showResults;
+	}
+	
+	@DataBoundSetter
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	
+	@DataBoundSetter
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	// getters
+	
 	public String getActionName() {
 		return actionName;
 	}

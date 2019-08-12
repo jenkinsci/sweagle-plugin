@@ -63,24 +63,36 @@ public class SweagleActionExport extends hudson.tasks.Builder implements SimpleB
 	private String exporter;
 
 	@CheckForNull
-	private String args;
+	private String args="";
 	
-	private boolean markFailed;
-	private boolean showResults;
+	private boolean markFailed=false;
+	private boolean showResults=false;
 	
 	
 	
 	@DataBoundConstructor
-	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String fileLocation, @CheckForNull String exporter, @CheckForNull String args, @CheckForNull String format,  boolean markFailed, boolean showResults) {
+	public SweagleActionExport(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String fileLocation, @CheckForNull String exporter, @CheckForNull String format) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.mdsName = mdsName;
 		this.fileLocation=fileLocation;
 		this.exporter=exporter;
-		this.args=args;
 		this.format=format;
-		this.markFailed = markFailed;
-		this.showResults = showResults;
 				
+	}
+	
+	@DataBoundSetter
+	public void setMarkFailed(boolean markFailed) {
+		this.markFailed = markFailed;
+	}
+
+	@DataBoundSetter
+	public void setShowResults(boolean showResults) {
+		this.showResults = showResults;
+	}
+	
+	@DataBoundSetter
+	public void setArgs(String args) {
+		this.args = args;
 	}
 
 

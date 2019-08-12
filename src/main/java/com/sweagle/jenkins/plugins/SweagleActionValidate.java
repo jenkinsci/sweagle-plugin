@@ -54,27 +54,44 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	@CheckForNull
 	private String mdsName;
 
-	private int warnMax;
-	private int errMax;
-	private boolean markFailed;
-	private boolean showResults;
-	long retryInterval;
-	int retryCount;
+	private int warnMax = 0;
+	private int errMax = 0;
+	private boolean markFailed=false;
+	private boolean showResults=false;
+	long retryInterval = 10;
+	int retryCount = 0;
 	
 	
 
 	@DataBoundConstructor
-	public SweagleActionValidate(@CheckForNull String actionName,  @CheckForNull String mdsName,
-		int warnMax, int errMax, int retryCount, long retryInterval) {
+	public SweagleActionValidate(@CheckForNull String actionName,  @CheckForNull String mdsName) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.mdsName = mdsName;
-		this.warnMax = warnMax;
-		this.errMax = errMax;
-		this.retryCount = retryCount;
-		this.retryInterval = retryInterval;
+
 	}
 
 
+	
+	@DataBoundSetter
+	public void setWarnMax(int warnMax) {
+		this.warnMax = warnMax;
+	}
+	
+	@DataBoundSetter
+	public void setErrMax(int errMax) {
+		this.errMax = errMax;
+	}
+	
+	@DataBoundSetter
+	public void setRetryCount(int retryCount) {
+		this.retryCount = retryCount;
+	}
+	
+	@DataBoundSetter
+	public void setRetryInterval(int retryInterval) {
+		this.retryInterval = retryInterval;
+	}
+	
 	@DataBoundSetter
 	public void setMarkFailed(boolean markFailed) {
 		this.markFailed = markFailed;

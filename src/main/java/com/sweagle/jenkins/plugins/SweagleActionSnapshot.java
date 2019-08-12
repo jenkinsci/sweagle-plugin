@@ -54,28 +54,44 @@ public class SweagleActionSnapshot extends hudson.tasks.Builder implements Simpl
 	private String mdsName;
 	
 	@CheckForNull
-	private String description;
+	private String description="";
 	
 	@CheckForNull
-	private String tag;
+	private String tag ="";
 
-	private boolean markFailed;
-	private boolean showResults;
+	private boolean markFailed=false;
+	private boolean showResults=false;
 
 	
 	
 	@DataBoundConstructor
-	public SweagleActionSnapshot(@CheckForNull String actionName, @CheckForNull String mdsName, @CheckForNull String description, @CheckForNull String tag,  boolean markFailed, boolean showResults) {
+	public SweagleActionSnapshot(@CheckForNull String actionName, @CheckForNull String mdsName) {
 		this.actionName = Util.fixEmptyAndTrim(actionName);
 		this.mdsName = mdsName;
-		this.description = description;
-		this.tag = tag;
-		this.markFailed = markFailed;
-		this.showResults = showResults;
+
 				
 	}
 
+	@DataBoundSetter
+	public void setMarkFailed(boolean markFailed) {
+		this.markFailed = markFailed;
+	}
 
+	@DataBoundSetter
+	public void setShowResults(boolean showResults) {
+		this.showResults = showResults;
+	}
+
+	@DataBoundSetter
+	public void setTag(String tag) {
+		this.tag = tag;
+	}
+	
+	@DataBoundSetter
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	public String getActionName() {
 		return actionName;
 	}
