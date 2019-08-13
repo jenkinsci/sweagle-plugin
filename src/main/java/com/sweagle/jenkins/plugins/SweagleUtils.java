@@ -9,13 +9,10 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.jayway.jsonpath.JsonPath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
-import net.sf.json.JSONException;
 import hudson.AbortException;
 import hudson.EnvVars;
 import okhttp3.MediaType;
@@ -25,7 +22,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class SweagleUtils {
-	private static final Logger LOGGER = LoggerFactory.getLogger(SweagleUtils.class);
+
 	static OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(60, TimeUnit.SECONDS)
 			.readTimeout(60, TimeUnit.SECONDS)
 			.writeTimeout(60, TimeUnit.SECONDS)

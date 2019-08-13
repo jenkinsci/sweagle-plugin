@@ -25,23 +25,18 @@
 package com.sweagle.jenkins.plugins;
 
 import org.jenkinsci.Symbol;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import hudson.util.Secret;
+
 
 //DescriptorImpl governs the global config settings
 
 @Extension
 @Symbol("SWEAGLESnapshot")
 public final class DescriptorImpl_Snapshot extends BuildStepDescriptor<Builder> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SweagleActionSnapshot.class);
-    
-     
     public DescriptorImpl_Snapshot() {
         super(SweagleActionSnapshot.class);
        

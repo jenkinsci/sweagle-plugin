@@ -32,7 +32,7 @@ import hudson.Extension;
 import hudson.model.AbstractProject;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import hudson.util.Secret;
+
 
 //DescriptorImpl governs the global config settings
 

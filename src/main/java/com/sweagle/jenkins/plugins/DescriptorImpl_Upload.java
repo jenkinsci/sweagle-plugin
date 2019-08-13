@@ -29,13 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import hudson.Extension;
-import hudson.Plugin;
 import hudson.model.AbstractProject;
-import hudson.model.Descriptor;
 import hudson.tasks.BuildStepDescriptor;
 import hudson.tasks.Builder;
-import hudson.util.Secret;
-import jenkins.model.Jenkins;
 
 //DescriptorImpl governs the global config settings
 
