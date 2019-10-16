@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import com.jayway.jsonpath.JsonPath;
 import hudson.model.Run;
@@ -76,7 +77,7 @@ public class SweagleUtils {
 	}
 
 	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileLocation, String nodePath,
-			String format, boolean allowDelete, boolean withSnapshot, boolean onlyParent, String tag, String description, boolean markFailed,  TaskListener listener, EnvVars env) throws AbortException, UnsupportedEncodingException {
+			String format, boolean allowDelete, boolean withSnapshot, boolean onlyParent, String tag, String description, boolean markFailed,  TaskListener listener, boolean showResults, EnvVars env) throws AbortException, UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Uploading Config from " + fileLocation + " to " + nodePath);
@@ -95,6 +96,9 @@ public class SweagleUtils {
 				loggerUtils.error(e.toString());
 		}
 		
+		tag=Objects.toString(tag, "");
+		description=Objects.toString(description, "");
+
 
 		MediaType mediaType = MediaType.parse("text/plain");
 		RequestBody body = RequestBody.create(mediaType, content);
@@ -115,6 +119,11 @@ public class SweagleUtils {
 		try {
 			Response response = client.newCall(request).execute();
 			responseString = response.body().string();
+			if (showResults) {
+			loggerUtils.debug("request:" + request.toString());
+			loggerUtils.debug("response code: "+ response.code() + "  " + response.body());
+			loggerUtils.debug(response.toString());
+			}
 			if (response.code() >299 && markFailed) {
 				throw new AbortException("Error " +response.code() + "  " +responseString);}
 			response.close();

@@ -201,7 +201,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		String actionResonse = null;
 		
 			
-		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, allowDelete, withSnapshot, onlyParent, tagEnv, descriptionEnv, markFailed, listener, env);
+		actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, fileLocationExp,  nodePathExp, format, allowDelete, withSnapshot, onlyParent, tagEnv, descriptionEnv, markFailed, listener, showResults, env);
 
 		
 		
