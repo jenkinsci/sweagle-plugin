@@ -1,4 +1,4 @@
 <?jelly escape-by-default='true'?>
 <div>
-   This plugin will check the status of a set of config data stored in SWEAGLE and mark the build unstable based on the results.
+   This plugin provides a quality gate for your configuration data. Sweagle will consolidate, secure, version, and validate your configuration files.
 </div>

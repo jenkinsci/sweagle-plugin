@@ -25,6 +25,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+
+
 public class SweagleUtils {
 
 	static OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(60, TimeUnit.SECONDS)
@@ -48,6 +50,7 @@ public class SweagleUtils {
 				.addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).build();
 
 		String responseString = null;
+		ValidationReport validationReport = new ValidationReport(run, mdsName);
 		try {
 			response = client.newCall(request).execute();
 			responseString = response.body().string();
@@ -56,14 +59,16 @@ public class SweagleUtils {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
+		
 		int mdsErrors = JsonPath.read(responseString, "summary.errors");
 		int mdsWarns = JsonPath.read(responseString, "summary.warnings");
 		loggerUtils.info(mdsName + " contains " + mdsWarns + " warnings and " + mdsErrors + " errors");
 		if (mdsErrors > errMax & errMax != -1) {
 			if (showResults)
 				loggerUtils.debug(responseString);
+			
 			if (markFailed)
+			run.addAction(validationReport);
 				throw new AbortException(" Errors: " + mdsErrors + " Exceeds error threshold: " + errMax);
 		}
 		if (mdsWarns > warnMax & warnMax != -1) {
@@ -77,8 +82,8 @@ public class SweagleUtils {
 	}
 
 	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileName, String nodePath, String format,
-			boolean allowDelete, boolean onlyParent, boolean filenameNodes, boolean markFailed, FilePath workspace, TaskListener listener,
-			boolean showResults, int changeset, EnvVars env) throws AbortException, UnsupportedEncodingException {
+		boolean allowDelete, boolean onlyParent, boolean filenameNodes, boolean autoRecognize, boolean markFailed, FilePath workspace, TaskListener listener,
+		boolean showResults, int changeset, EnvVars env) throws AbortException, UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Uploading Config from " + fileName + " to " + nodePath);
@@ -106,7 +111,7 @@ public class SweagleUtils {
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/bulk-operations/dataLoader/upload?nodePath=" + nodePath + "&format="
 						+ format + "&allowDelete=" + allowDelete + "&validationLevel=error" + "&changeset=" + changeset
-						+ "&autoRetry=true" + "&onlyParent=" + onlyParent)
+						+ "&autoRetry=true" + "&onlyParent=" + onlyParent + "&autoRecognize="+ autoRecognize)
 				.post(body).addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
 				.addHeader("Accept", "*/*").addHeader("Cache-Control", "no-cache").addHeader("Connection", "keep-alive")
 				.build();
@@ -165,18 +170,19 @@ public class SweagleUtils {
 	}
 
 	static String exportConfig(String sweagleURL, Secret sweagleAPIkey, String mdsName, String fileLocation,
-			String exporter, String args, String format, boolean markFailed, TaskListener listener, EnvVars env)
+			String exporter, String args, String format, String tag, boolean markFailed, FilePath workspace, TaskListener listener, EnvVars env)
 			throws AbortException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
-		loggerUtils.info("Exporting from " + mdsName + " with exporter " + exporter + " in format " + format + " at "
+		loggerUtils.info("Exporting from " + mdsName + " " +tag + " with exporter " + exporter + " in format " + format + " at "
 				+ sweagleURL);
 		String responseString = null;
 		Response response = null;
+		
 
 		MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
 		RequestBody body = RequestBody.create(mediaType,
-				"mds=" + mdsName + "&parser=" + exporter + "&args=" + args + "&format=" + format);
+				"mds=" + mdsName + "&parser=" + exporter + "&args=" + args + "&format=" + format+ "&tag="+tag);
 		Request request = new Request.Builder().url(sweagleURL + "/api/v1/tenant/metadata-parser/parse").post(body)
 				.addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).addHeader("Accept", "*/*")
 				.addHeader("content-type", "application/x-www-form-urlencoded").addHeader("Connection", "keep-alive")
@@ -199,12 +205,10 @@ public class SweagleUtils {
 		String content = responseString;
 
 		try {
-			if (env.get("WORKSPACE") != null)
-				Files.write(Paths.get(env.get("WORKSPACE") + "/" + fileLocation),
+			
+				Files.write(Paths.get(workspace.toString() + File.separator + fileLocation),
 						content.getBytes(StandardCharsets.UTF_8));
-			else
-				Files.write(Paths.get(fileLocation), content.getBytes(StandardCharsets.UTF_8));
-
+			
 		} catch (Exception e) {
 			if (markFailed)
 				throw new AbortException(e.toString());
@@ -331,5 +335,59 @@ public class SweagleUtils {
 			loggerUtils.debug("approve changeset: " + approveChangeStResponseString);
 
 	}
+	
+	static String getMdsValue(String sweagleURL, Secret sweagleAPIkey, String mdsName, 
+			String tag, String jsonPath, boolean showResults, boolean markFailed, TaskListener listener)
+			throws AbortException {
+		PrintStream logger = listener.getLogger();
+		LoggerUtils loggerUtils = new LoggerUtils(logger);
+		loggerUtils.info("Retreiving value for " + jsonPath + " in " + mdsName );
+		String responseString = null;
+		Response response = null;
+		
+
+		MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+		RequestBody body = RequestBody.create(mediaType,
+				"mds=" + mdsName + "&parser=All" + "&format=JSON"+"&tag="+tag);
+		Request request = new Request.Builder().url(sweagleURL + "/api/v1/tenant/metadata-parser/parse").post(body)
+				.addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).addHeader("Accept", "*/*")
+				.addHeader("content-type", "application/x-www-form-urlencoded").addHeader("Connection", "keep-alive")
+				.addHeader("cache-control", "no-cache").build();
+
+		try {
+			response = client.newCall(request).execute();
+			responseString = response.body().string();
+			if (response.code() > 299 && markFailed) {
+				throw new AbortException("Error " + response.code() + "  " + responseString);
+			}
+			response.close();
+			if(showResults)
+				loggerUtils.debug(mdsName+": "+responseString);
+			
+			
+		} catch (Exception e) {
+			if (markFailed)
+				throw new AbortException(e.toString());
+			else
+				loggerUtils.error(e.toString());
+		}
+
+		String content = JsonPath.parse(responseString).read(jsonPath).toString();
+		if (content.contentEquals("")||content.isEmpty()) {
+			if (markFailed) 
+				throw new AbortException("Json Path: "+ jsonPath + " not found in "+ mdsName);
+			 else
+				loggerUtils.error("Json Path: "+ jsonPath + " not found in "+ mdsName);
+						
+		}
+		
+		
+		return content;
+		
+		
+		}
+	
+	
+	
 
 }

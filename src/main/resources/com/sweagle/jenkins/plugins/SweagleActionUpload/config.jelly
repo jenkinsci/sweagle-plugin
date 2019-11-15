@@ -31,6 +31,9 @@
     <f:entry title="Search Sub-directories" field="subDirectories">
         <f:checkbox/>
     </f:entry>
+    <f:entry title="Recognize Types" field="autoRecognize">
+        <f:checkbox/>
+    </f:entry>
      <f:optionalBlock name="withSnapshot" title="Upload with Snapshot" inline="true" checked="${instance.withSnapshot}">
       	<f:entry title="Snapshot Description" field="description">
         	<f:textbox checkMethod="post" />

@@ -31,6 +31,8 @@ import java.io.PrintStream;
 import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
+
+import hudson.AbortException;
 import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
@@ -141,6 +143,7 @@ public class SweagleActionSnapshot extends hudson.tasks.Builder implements Simpl
 		DescriptorImpl_Validate descriptorImpl = jenkins.getDescriptorByType(DescriptorImpl_Validate.class);
 		String sweagleURL = descriptorImpl.getSweagleURL();
 		Secret sweagleAPIkey = descriptorImpl.getSweagleAPIkey();
+		if (sweagleURL == null) {throw new AbortException("Sweagle URL not set in Jenkins Configuration.");}
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);

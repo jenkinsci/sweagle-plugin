@@ -71,6 +71,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	private boolean filenameNodes = false;
 	private boolean subDirectories = false;
 	private boolean withSnapshot = false;
+	private boolean autoRecognize = false;
 	private String tag;
 	private String description;
 	private boolean markFailed = false;
@@ -109,6 +110,11 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	@DataBoundSetter
 	public void setWithSnapshot(boolean withSnapshot) {
 		this.withSnapshot = withSnapshot;
+	}
+	
+	@DataBoundSetter
+	public void setAutoRecognize(boolean autoRecognize) {
+		this.autoRecognize = autoRecognize;
 	}
 
 	@DataBoundSetter
@@ -168,6 +174,10 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	public boolean getWithSnapshot() {
 		return withSnapshot;
 	}
+	
+	public boolean getAutoRecognize() {
+		return autoRecognize;
+	}
 
 	public String getTag() {
 		return tag;
@@ -203,6 +213,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		DescriptorImpl_Validate descriptorImpl = jenkins.getDescriptorByType(DescriptorImpl_Validate.class);
 		String sweagleURL = descriptorImpl.getSweagleURL();
 		Secret sweagleAPIkey = descriptorImpl.getSweagleAPIkey();
+		if (sweagleURL == null) {throw new AbortException("Sweagle URL not set in Jenkins Configuration.");}
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
@@ -253,7 +264,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 
 			for (String file : files) {
 				actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, file, nodePathExp, format,
-						allowDelete, onlyParent, filenameNodes, markFailed, workspace, listener, showResults, changeSetId, env);
+						allowDelete, onlyParent, filenameNodes, autoRecognize, markFailed, workspace, listener, showResults, changeSetId, env);
 			}
 
 			SweagleUtils.approveChangeSet(sweagleURL, sweagleAPIkey, tagEnv, descriptionEnv, withSnapshot, changeSetId,

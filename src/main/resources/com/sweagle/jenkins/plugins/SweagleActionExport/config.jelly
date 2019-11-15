@@ -25,6 +25,9 @@
 	        <option value="ini" selected="${instance.format.equals('ini')? 'true':null}">ini</option>
 	    </select>
     </f:entry>
+    <f:entry title="Map values to Environment Variables" field="mapToVariables">
+      <f:expandableTextbox />
+    </f:entry>
     <f:entry title="Fail build on failed export" field="markFailed">
         <f:checkbox/>
     </f:entry>

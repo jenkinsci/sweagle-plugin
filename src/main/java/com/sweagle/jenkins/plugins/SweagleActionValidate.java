@@ -37,6 +37,7 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
+import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
@@ -160,6 +161,7 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		DescriptorImpl_Validate descriptorImpl = getDescriptor();
 		String sweagleURL = descriptorImpl.getSweagleURL();
 		Secret sweagleAPIkey = descriptorImpl.getSweagleAPIkey();
+		if (sweagleURL == null) {throw new AbortException("Sweagle URL not set in Jenkins Configuration.");}
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
@@ -185,6 +187,8 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		if (showResults)
 		loggerUtils.debug(actionResonse);
 		
+		ValidationReport validationReport = new ValidationReport(run, mdsNameExp);
+		run.addAction(validationReport);
 
 	}
 }
