@@ -26,7 +26,7 @@ package com.sweagle.jenkins.plugins;
 
 import java.io.IOException;
 import java.io.PrintStream;
-
+import java.util.ArrayList;
 
 import javax.annotation.CheckForNull;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -37,7 +37,6 @@ import hudson.EnvVars;
 import hudson.FilePath;
 import hudson.Launcher;
 import hudson.Util;
-import hudson.model.AbstractBuild;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.tasks.BuildStepMonitor;
@@ -166,6 +165,8 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Executing SWEAGLE Validate Action: " + actionName + " at: " + sweagleURL);
+		ArrayList<ValidatorStatus> validatorStatuses = new ArrayList<ValidatorStatus>();
+		
 		
 		String mdsNameExp = env.expand(mdsName);
 		if (retryInterval<10)
@@ -176,8 +177,13 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)&&(retry<retryCount||retryCount==-1)) {
 				Thread.sleep(retryInterval*1000);
 				retry ++;}
-			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener))
+			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)) {
+			//Generate Validation Report
+			validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, run);
+			ValidationReport validationReport = new ValidationReport(validatorStatuses,  run);
+			run.addAction(validationReport);
 			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed, warnMax, errMax, listener, showResults, run );
+			}
 			else {
 				if (markFailed)
 					throw new AbortException("Pending data for " + mdsNameExp + " not found.");
@@ -187,8 +193,11 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		if (showResults)
 		loggerUtils.debug(actionResonse);
 		
-		ValidationReport validationReport = new ValidationReport(run, mdsNameExp);
-		run.addAction(validationReport);
+		
 
 	}
+
+
+
+	
 }

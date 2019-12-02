@@ -1,13 +1,20 @@
 package com.sweagle.jenkins.plugins;
 
+import java.util.ArrayList;
+
+
+
 import hudson.model.Action;
 
 import hudson.model.Run;
 
 public class ValidationReport implements Action {
 
-	Run<?,?> build;
+	Run<?,?> run;
 	String mdsName;
+	private ArrayList<ValidatorStatus> validatorStatuses;
+	
+	
 	
     @Override
     public String getIconFileName() {
@@ -25,7 +32,7 @@ public class ValidationReport implements Action {
     }
     
     public int getBuildNumber() {
-        return this.build.number;
+        return this.run.number;
     }
     
     public String getMdsName() {
@@ -33,15 +40,23 @@ public class ValidationReport implements Action {
     }
     
     public Run<?,?> getBuild() {
-        return this.build;
+        return this.run;
     }
+    
+    public ArrayList<ValidatorStatus> getValidatorStatuses() {
+	    return  validatorStatuses;	   
+    }
+    
 
     
-    public ValidationReport(Run<?,?> build, String mdsName)
+    public ValidationReport(final ArrayList<ValidatorStatus> validatorStatuses, Run<?,?> run )
     {
       
-        this.build = build;
-        this.mdsName = mdsName;
+    	this.validatorStatuses = validatorStatuses;
+    	this.run = run;
+        
+        
+       
     }
 	
 }

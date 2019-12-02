@@ -3,19 +3,18 @@
 	<l:layout norefresh="true">
         <st:include it="${it.build}" page="sidepanel.jelly"/>
         <l:main-panel>
-            <h1><img  src ="${resURL}/plugin/sweagle/images/sweagleTop.png" height="68"/></h1>
-            <h1>Sweagle Validation Report for ${it.mdsName} v1.${it.buildNumber}</h1>
-           	<table width="100%" border="1" cellspacing="2" cellpadding="2">
-			<tr style="font-weight:bold"><td width="25%">Validator</td><td width="15%">Status</td><td>Info</td></tr>
-			<tr><td>HttpsFirewallEnabled</td><td bgcolor="green">VALID</td><td></td></tr>
-			<tr><td>keyExistence</td><td bgcolor="green">VALID</td><td></td></tr>
-            <tr><td>dbComplianceChecker</td><td bgcolor="red">INVALID</td><td>ERROR: key require_secure_transport doesn't have expected value on.</td></tr>
-            <tr><td>substringValidator</td><td bgcolor="green">VALID</td><td></td></tr>
-            <tr><td>passwordChecker</td><td bgcolor="green">VALID</td><td></td></tr>
-            <tr><td>noHTTP</td><td bgcolor="green">VALID</td><td></td></tr>
-         	
-                  
-            </table>   
+            <h1><img  src ="${resURL}/plugin/sweagle/images/SweagleTop.png" height="68"/></h1>
+            <h1>Sweagle Validation Report for ${it.mdsName} v1.7.${it.buildNumber}</h1>
+            
+           	<table width="80%" border="1" cellspacing="2" cellpadding="2">
+            <tr style="font-weight:bold"><td>Validator</td> <td>Status</td><td>Info</td></tr>
+             <j:forEach items="${it.validatorStatuses}" var="i">
+                <tr><td>${i.validatorName}    </td>
+                <td>${i.validatorStatus}   </td>
+                <td> ${i.validatorInfo} </td> </tr>
+             </j:forEach>
+            </table> 
+           
         </l:main-panel>
     </l:layout>
 </j:jelly>

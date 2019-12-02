@@ -9,6 +9,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
@@ -33,7 +34,7 @@ public class SweagleUtils {
 			.readTimeout(60, TimeUnit.SECONDS).writeTimeout(60, TimeUnit.SECONDS).build();
 
 	static String validateConfig(String mdsName, String sweagleURL, Secret sweagleAPIkey, boolean markFailed,
-			int warnMax, int errMax, TaskListener listener, boolean showResults, Run<?, ?> run)
+			int warnMax, int errMax, TaskListener listener, boolean showResults,  Run<?, ?> run)
 			throws InterruptedException, IOException {
 
 		PrintStream logger = listener.getLogger();
@@ -50,7 +51,8 @@ public class SweagleUtils {
 				.addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).build();
 
 		String responseString = null;
-		ValidationReport validationReport = new ValidationReport(run, mdsName);
+				
+		
 		try {
 			response = client.newCall(request).execute();
 			responseString = response.body().string();
@@ -68,7 +70,6 @@ public class SweagleUtils {
 				loggerUtils.debug(responseString);
 			
 			if (markFailed)
-			run.addAction(validationReport);
 				throw new AbortException(" Errors: " + mdsErrors + " Exceeds error threshold: " + errMax);
 		}
 		if (mdsWarns > warnMax & warnMax != -1) {
