@@ -57,6 +57,7 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	private int warnMax = 0;
 	private int errMax = 0;
 	private boolean markFailed=false;
+	private boolean noPending=false;
 	private boolean showResults=false;
 	long retryInterval = 10;
 	int retryCount = 0;
@@ -98,6 +99,11 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	}
 
 	@DataBoundSetter
+	public void setNoPending(boolean noPending) {
+		this.noPending = noPending;
+	}
+	
+	@DataBoundSetter
 	public void setShowResults(boolean showResults) {
 		this.showResults = showResults;
 	}
@@ -131,11 +137,14 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	}
 	
 
-
 	public boolean getMarkFailed() {
 		return markFailed;
 	}
 
+	public boolean getNoPending() {
+		return noPending;
+	}
+	
 	public boolean getShowResults() {
 		return showResults;
 	}
@@ -180,12 +189,12 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)) {
 			//Generate Validation Report
 			validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, run);
-			ValidationReport validationReport = new ValidationReport(validatorStatuses,  run);
+			ValidationReport validationReport = new ValidationReport(validatorStatuses, mdsName, run);
 			run.addAction(validationReport);
-			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed, warnMax, errMax, listener, showResults, run );
+			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed,  warnMax, errMax, listener, showResults, run );
 			}
 			else {
-				if (markFailed)
+				if (noPending)
 					throw new AbortException("Pending data for " + mdsNameExp + " not found.");
 				else 
 					loggerUtils.info("Pending data for " + mdsNameExp + " not found.");	

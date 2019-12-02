@@ -49,10 +49,11 @@ public class ValidationReport implements Action {
     
 
     
-    public ValidationReport(final ArrayList<ValidatorStatus> validatorStatuses, Run<?,?> run )
+    public ValidationReport(final ArrayList<ValidatorStatus> validatorStatuses, String mdsName, Run<?,?> run )
     {
       
     	this.validatorStatuses = validatorStatuses;
+    	this.mdsName = mdsName;
     	this.run = run;
         
         

@@ -4,13 +4,22 @@
         <st:include it="${it.build}" page="sidepanel.jelly"/>
         <l:main-panel>
             <h1><img  src ="${resURL}/plugin/sweagle/images/SweagleTop.png" height="68"/></h1>
-            <h1>Sweagle Validation Report for ${it.mdsName} v1.7.${it.buildNumber}</h1>
+            <h2>Config Data Validation Report for ${it.mdsName} Build: ${it.buildNumber}</h2>
             
            	<table width="80%" border="1" cellspacing="2" cellpadding="2">
             <tr style="font-weight:bold"><td>Validator</td> <td>Status</td><td>Info</td></tr>
              <j:forEach items="${it.validatorStatuses}" var="i">
                 <tr><td>${i.validatorName}    </td>
-                <td>${i.validatorStatus}   </td>
+                <j:choose>
+               	  <j:when test="${i.validatorStatus == 'Valid'}">
+                	<td bgcolor="green">${i.validatorStatus}   </td></j:when>
+                  <j:when test="${i.validatorStatus == 'Error'}">
+                	<td bgcolor="red">${i.validatorStatus}   </td></j:when>
+                  <j:when test="${i.validatorStatus == 'Warning'}">
+                    <td bgcolor="yellow">${i.validatorStatus}   </td></j:when>
+                  <j:otherwise>
+                    <td>${i.validatorStatus}   </td> </j:otherwise>
+                </j:choose>
                 <td> ${i.validatorInfo} </td> </tr>
              </j:forEach>
             </table> 

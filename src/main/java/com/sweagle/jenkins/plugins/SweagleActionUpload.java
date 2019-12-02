@@ -73,6 +73,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	private boolean withSnapshot = false;
 	private boolean autoRecognize = false;
 	private String tag;
+	private String identifierWords;
 	private String description;
 	private boolean markFailed = false;
 	private boolean showResults = false;
@@ -136,7 +137,12 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
+	
+	@DataBoundSetter
+	public void setIdentifierWords(String identifierWords) {
+		this.identifierWords = identifierWords;
+	}	
+	
 	// getters
 
 	public String getActionName() {
@@ -186,6 +192,10 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 	public String getDescription() {
 		return description;
 	}
+	
+	public String getIdentifierWords() {
+		return identifierWords;
+	}
 
 	public boolean getMarkFailed() {
 		return markFailed;
@@ -222,6 +232,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 		String fileLocationExp = env.expand(fileLocation);
 		String nodePathExp = env.expand(nodePath);
 		String descriptionEnv = env.expand(description);
+		String identifierWordsEnv = env.expand(identifierWords);
 		String tagEnv = env.expand(tag);
 		String actionResonse = null;
 
@@ -264,7 +275,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 
 			for (String file : files) {
 				actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, file, nodePathExp, format,
-						allowDelete, onlyParent, filenameNodes, autoRecognize, markFailed, workspace, listener, showResults, changeSetId, env);
+						allowDelete, onlyParent, filenameNodes, identifierWords, autoRecognize, markFailed, workspace, listener, showResults, changeSetId, env);
 			}
 
 			SweagleUtils.approveChangeSet(sweagleURL, sweagleAPIkey, tagEnv, descriptionEnv, withSnapshot, changeSetId,

@@ -9,6 +9,9 @@
      <f:entry title="Node Path" field="nodePath">
         <f:textbox checkMethod="post" />
     </f:entry>
+     <f:entry title="Identifier Words" field="identifierWords">
+        <f:textbox checkMethod="post" />
+    </f:entry>
        <f:entry name="format" title="Choose file format" field="format">
 	    <select name="format">
 	        <option value="json"  selected="${instance.format.equals('json')? 'true':null}">json</option>

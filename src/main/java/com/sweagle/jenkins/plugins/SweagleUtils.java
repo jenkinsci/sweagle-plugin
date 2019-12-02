@@ -83,7 +83,7 @@ public class SweagleUtils {
 	}
 
 	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileName, String nodePath, String format,
-		boolean allowDelete, boolean onlyParent, boolean filenameNodes, boolean autoRecognize, boolean markFailed, FilePath workspace, TaskListener listener,
+		boolean allowDelete, boolean onlyParent, boolean filenameNodes, String identifierWords, boolean autoRecognize, boolean markFailed, FilePath workspace, TaskListener listener,
 		boolean showResults, int changeset, EnvVars env) throws AbortException, UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
@@ -112,7 +112,7 @@ public class SweagleUtils {
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/bulk-operations/dataLoader/upload?nodePath=" + nodePath + "&format="
 						+ format + "&allowDelete=" + allowDelete + "&validationLevel=error" + "&changeset=" + changeset
-						+ "&autoRetry=true" + "&onlyParent=" + onlyParent + "&autoRecognize="+ autoRecognize)
+						+ "&autoRetry=true" + "&onlyParent=" + onlyParent + "&autoRecognize="+ autoRecognize +"&identifierWords="+identifierWords)
 				.post(body).addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey))
 				.addHeader("Accept", "*/*").addHeader("Cache-Control", "no-cache").addHeader("Connection", "keep-alive")
 				.build();
