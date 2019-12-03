@@ -37,7 +37,7 @@ public class SweagleValidateReportUtils {
 		Response response = client.newCall(request).execute();
 		String responseString = response.body().string();
 		if (showResults)
-			loggerUtils.debug(responseString);
+			loggerUtils.debug("getMdsId:"+responseString);
 
 		String mdsId = JsonPath.read(responseString, "_entities[0].master.id").toString();
 
@@ -61,16 +61,16 @@ public class SweagleValidateReportUtils {
 		String responseString = response.body().string();
 
 		JSONParser parser = new JSONParser();
-		JSONObject responseStringJSON = null;
+		JSONObject responseStringJSON = new JSONObject();
 		try {
 			responseStringJSON = (JSONObject) parser.parse(responseString);
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		if (showResults)
-			loggerUtils.debug(responseString);
-
+		if (showResults) {
+			loggerUtils.debug("get assigned parsers:" + responseString);
+		}
 		JSONArray entities = (JSONArray) responseStringJSON.get("_entities");
 		int len = entities.size();
 		for (int i = 0; i < len; i++) {
@@ -113,33 +113,37 @@ public class SweagleValidateReportUtils {
 		int mdsErrors = JsonPath.read(responseString, "summary.errors");
 		int mdsWarns = JsonPath.read(responseString, "summary.warnings");
 		
-		
+		final String responseStringFinal=responseString;
 		
 		
 		if (mdsErrors > 0) {
-			JSONArray validatorErrors = JsonPath.read(responseString,"errors.failedParsers");
-			for (int i = 0 ; i < validatorErrors.size(); i++) {
+			
+			
+			LinkedHashMap<String, JSONArray> validatorErrors = JsonPath.read(responseString,"errors");
+			validatorErrors.forEach((key, value) -> {	
+			JSONArray tempLoopError = JsonPath.read(responseStringFinal,"errors."+key);
+			for (int i = 0 ; i < tempLoopError.size(); i++) {
 				
-				String validatorName=JsonPath.read(validatorErrors.get(i), "validatorName");
-			    String errorDescription=JsonPath.read(validatorErrors.get(i),"errorDescription");		
+				String validatorName=JsonPath.read(tempLoopError.get(i), "validatorName");
+			    String errorDescription=JsonPath.read(tempLoopError.get(i),"errorDescription");		
 			
 			for(ValidatorStatus d : validatorStatuses){
 		        if(d.getValidatorName() != null && d.getValidatorName().contains(validatorName) ) {
 		        
 		        	d.setValidatorStatus("Error");
-		        	d.setValidatorInfo(errorDescription);
+		        	d.setValidatorInfo(key +": "+errorDescription);
 		        }
 		        
 			}
 		           
 		    }
-			
+			});
 			
 		}
 		
 		if (mdsWarns > 0) {
 			LinkedHashMap<String, JSONArray> validatorWarnings = JsonPath.read(responseString,"warnings");
-			final String responseStringFinal=responseString;
+			
 			
 			validatorWarnings.forEach((key, value) -> {	
 			JSONArray tempLoopWarn=JsonPath.read(responseStringFinal,"warnings."+key);

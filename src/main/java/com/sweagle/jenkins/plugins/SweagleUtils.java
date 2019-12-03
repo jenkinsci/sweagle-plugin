@@ -67,14 +67,14 @@ public class SweagleUtils {
 		loggerUtils.info(mdsName + " contains " + mdsWarns + " warnings and " + mdsErrors + " errors");
 		if (mdsErrors > errMax & errMax != -1) {
 			if (showResults)
-				loggerUtils.debug(responseString);
+				loggerUtils.debug("validateResults:"+responseString);
 			
 			if (markFailed)
 				throw new AbortException(" Errors: " + mdsErrors + " Exceeds error threshold: " + errMax);
 		}
 		if (mdsWarns > warnMax & warnMax != -1) {
 			if (showResults)
-				loggerUtils.debug(responseString);
+				loggerUtils.debug("validateResults:"+responseString);
 			if (markFailed)
 				throw new AbortException(" Warnings: " + mdsWarns + " Exceeds warning threshold: " + warnMax);
 		}
@@ -121,9 +121,9 @@ public class SweagleUtils {
 			Response response = client.newCall(request).execute();
 			responseString = response.body().string();
 			if (showResults) {
-				loggerUtils.debug("request:" + request.toString());
-				loggerUtils.debug("response code: " + response.code() + "  " + response.body());
-				loggerUtils.debug(response.toString());
+				loggerUtils.debug("Upload request:" + request.toString());
+				loggerUtils.debug("Upload response code: " + response.code() + "  " + response.body());
+				loggerUtils.debug("Upload Response:"+response.toString());
 			}
 			if (response.code() > 299 && markFailed) {
 				throw new AbortException("Error " + response.code() + "  " + responseString);

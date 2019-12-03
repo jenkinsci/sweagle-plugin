@@ -275,7 +275,7 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 
 			for (String file : files) {
 				actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, file, nodePathExp, format,
-						allowDelete, onlyParent, filenameNodes, identifierWords, autoRecognize, markFailed, workspace, listener, showResults, changeSetId, env);
+						allowDelete, onlyParent, filenameNodes, identifierWordsEnv, autoRecognize, markFailed, workspace, listener, showResults, changeSetId, env);
 			}
 
 			SweagleUtils.approveChangeSet(sweagleURL, sweagleAPIkey, tagEnv, descriptionEnv, withSnapshot, changeSetId,

@@ -174,7 +174,7 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		loggerUtils.info("Executing SWEAGLE Validate Action: " + actionName + " at: " + sweagleURL);
-		ArrayList<ValidatorStatus> validatorStatuses = new ArrayList<ValidatorStatus>();
+
 		
 		
 		String mdsNameExp = env.expand(mdsName);
@@ -188,7 +188,7 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 				retry ++;}
 			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)) {
 			//Generate Validation Report
-			validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, run);
+			ArrayList<ValidatorStatus> validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, run);
 			ValidationReport validationReport = new ValidationReport(validatorStatuses, mdsName, run);
 			run.addAction(validationReport);
 			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed,  warnMax, errMax, listener, showResults, run );
