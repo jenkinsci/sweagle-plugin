@@ -122,6 +122,7 @@ public class SweagleValidateReportUtils {
 			LinkedHashMap<String, JSONArray> validatorErrors = JsonPath.read(responseString,"errors");
 			validatorErrors.forEach((key, value) -> {	
 			JSONArray tempLoopError = JsonPath.read(responseStringFinal,"errors."+key);
+			if (key.equals("failedParsers")) {
 			for (int i = 0 ; i < tempLoopError.size(); i++) {
 				
 				String validatorName=JsonPath.read(tempLoopError.get(i), "validatorName");
@@ -132,11 +133,26 @@ public class SweagleValidateReportUtils {
 		        
 		        	d.setValidatorStatus("Error");
 		        	d.setValidatorInfo(key +": "+errorDescription);
-		        }
+		        	}
 		        
-			}
-		           
+				}
+				}
+				
+				
+				
+				
 		    }
+			else {
+				
+				for (int i = 0 ; i < tempLoopError.size(); i++) {
+					String vPath= JsonPath.read(tempLoopError.get(i), "path");
+					String vKey=  JsonPath.read(tempLoopError.get(i), "key");
+					String vValue= JsonPath.read(tempLoopError.get(i), "value");
+					validatorStatuses.add(new ValidatorStatus(key, "Error", vPath+ "   key: "+vKey+  "  value: "+vValue));
+					}	
+				
+				
+			} 
 			});
 			
 		}
