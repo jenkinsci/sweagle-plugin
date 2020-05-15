@@ -59,6 +59,7 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	private boolean markFailed=false;
 	private boolean noPending=false;
 	private boolean showResults=false;
+	private boolean stored=false;
 	long retryInterval = 10;
 	int retryCount = 0;
 	
@@ -107,6 +108,11 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	public void setShowResults(boolean showResults) {
 		this.showResults = showResults;
 	}
+	
+	@DataBoundSetter
+	public void setStored(boolean stored) {
+		this.stored = stored;
+	}
 
 
 	public String getActionName() {
@@ -148,6 +154,10 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 	public boolean getShowResults() {
 		return showResults;
 	}
+	
+	public boolean getStored() {
+		return stored;
+	}
 
 	public BuildStepMonitor getRequiredMonitorService() {
 		return BuildStepMonitor.NONE;
@@ -187,17 +197,22 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 				Thread.sleep(retryInterval*1000);
 				retry ++;}
 			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)) {
-			//Generate Validation Report
-			ArrayList<ValidatorStatus> validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, run);
-			ValidationReport validationReport = new ValidationReport(validatorStatuses, mdsName, run);
+			//Generate Validation Report  prefix for stored or pending
+			String prefix;
+				if (stored)
+				prefix="Stored";
+				else
+				prefix="Pending";
+			ArrayList<ValidatorStatus> validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, stored, run);
+			ValidationReport validationReport = new ValidationReport(validatorStatuses, mdsName, prefix, run);
 			run.addAction(validationReport);
-			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed,  warnMax, errMax, listener, showResults, run );
+			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed,  warnMax, errMax, listener, showResults, stored, run );
 			}
 			else {
 				if (noPending)
-					throw new AbortException("Pending data for " + mdsNameExp + " not found.");
+					throw new AbortException("Data for " + mdsNameExp + " not found.");
 				else 
-					loggerUtils.info("Pending data for " + mdsNameExp + " not found.");	
+					loggerUtils.info("Data for " + mdsNameExp + " not found.");	
 			}
 		if (showResults)
 		loggerUtils.debug(actionResonse);

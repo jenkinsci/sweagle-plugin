@@ -34,19 +34,23 @@ public class SweagleUtils {
 			.readTimeout(60, TimeUnit.SECONDS).writeTimeout(60, TimeUnit.SECONDS).build();
 
 	static String validateConfig(String mdsName, String sweagleURL, Secret sweagleAPIkey, boolean markFailed,
-			int warnMax, int errMax, TaskListener listener, boolean showResults,  Run<?, ?> run)
+			int warnMax, int errMax, TaskListener listener, boolean showResults,  boolean stored,  Run<?, ?> run)
 			throws InterruptedException, IOException {
 
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
-
+		boolean forIncoming=!stored;
+		
 		Response response = null;
-		loggerUtils.info("Checking MDS Validity: " + mdsName);
+		if (stored)
+		loggerUtils.info("Checking Stored CDS Validity: " + mdsName);
+		else
+		loggerUtils.info("Checking Pending CDS Validity: " + mdsName);	
 		final EnvVars env = run.getEnvironment(listener);
 		mdsName = env.expand(mdsName);
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/include/validate?name=" + mdsName
-						+ "&forIncoming=true&withCustomValidations=true")
+						+ "&forIncoming="+forIncoming+"&withCustomValidations=true")
 				.get().addHeader("Accept", "application/json;charset=UTF-8")
 				.addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).build();
 

@@ -84,17 +84,18 @@ public class SweagleValidateReportUtils {
 
 	private static ArrayList<ValidatorStatus> getValidationReport(ArrayList<ValidatorStatus> validatorStatuses,
 			String mdsName, String sweagleURL, Secret sweagleAPIkey, TaskListener listener, boolean showResults,
-			Run<?, ?> run) {
+			boolean stored, Run<?, ?> run) {
 		
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
+		boolean forIncoming=!stored;
 
 		Response response = null;
 		loggerUtils.info("Creating Sweagle Validation Report for: " + mdsName);
 
 		Request request = new Request.Builder()
 				.url(sweagleURL + "/api/v1/data/include/validate?name=" + mdsName
-						+ "&forIncoming=true&withCustomValidations=true")
+						+ "&forIncoming="+forIncoming+"&withCustomValidations=true")
 				.get().addHeader("Accept", "application/json;charset=UTF-8")
 				.addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).build();
 
@@ -183,14 +184,14 @@ public class SweagleValidateReportUtils {
 	}
 
 	public static ArrayList<ValidatorStatus> buildValidatorStatuses(String mdsName, String sweagleURL,
-			Secret sweagleAPIkey, TaskListener listener, boolean showResults, Run<?, ?> run)
+			Secret sweagleAPIkey, TaskListener listener, boolean showResults, boolean stored, Run<?, ?> run)
 			throws InterruptedException, IOException {
 		ArrayList<ValidatorStatus> validatorStatuses = new ArrayList<ValidatorStatus>();
 		String mdsId = getMdsId(mdsName, sweagleURL, sweagleAPIkey, listener, showResults, run);
 		validatorStatuses = getAssignedParsers(validatorStatuses, mdsId, sweagleURL, sweagleAPIkey, listener,
 				showResults, run);
 		validatorStatuses = getValidationReport(validatorStatuses, mdsName, sweagleURL, sweagleAPIkey, listener,
-				showResults, run);
+				showResults, stored, run);
 
 		return validatorStatuses;
 

@@ -12,6 +12,7 @@ public class ValidationReport implements Action {
 
 	Run<?,?> run;
 	String mdsName;
+	String prefix;
 	private ArrayList<ValidatorStatus> validatorStatuses;
 	
 	
@@ -39,6 +40,10 @@ public class ValidationReport implements Action {
         return this.mdsName;
     }
     
+    public String getPrefix() {
+        return this.prefix;
+    }
+    
     public Run<?,?> getBuild() {
         return this.run;
     }
@@ -49,12 +54,13 @@ public class ValidationReport implements Action {
     
 
     
-    public ValidationReport(final ArrayList<ValidatorStatus> validatorStatuses, String mdsName, Run<?,?> run )
+    public ValidationReport(final ArrayList<ValidatorStatus> validatorStatuses, String mdsName, String prefix, Run<?,?> run )
     {
       
     	this.validatorStatuses = validatorStatuses;
     	this.mdsName = mdsName;
     	this.run = run;
+    	this.prefix = prefix;
         
         
        

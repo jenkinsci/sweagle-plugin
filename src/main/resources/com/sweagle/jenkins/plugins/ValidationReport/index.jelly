@@ -4,7 +4,7 @@
         <st:include it="${it.build}" page="sidepanel.jelly"/>
         <l:main-panel>
             <h1><img  src ="${resURL}/plugin/sweagle/images/SweagleTop.png" height="68"/></h1>
-            <h2>Config Data Validation Report for ${it.mdsName} Build: ${it.buildNumber}</h2>
+            <h2>${it.Prefix} Config Data Validation Report for ${it.mdsName} Build: ${it.buildNumber}</h2>
             
            	<table width="80%" border="1" cellspacing="2" cellpadding="2">
             <tr style="font-weight:bold"><td>Validator</td> <td>Status</td><td>Info</td></tr>

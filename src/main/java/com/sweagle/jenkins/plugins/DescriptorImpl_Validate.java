@@ -132,8 +132,8 @@ public final class DescriptorImpl_Validate extends BuildStepDescriptor<Builder> 
         } 
         if (responseCode==200) {
     	int numMeasurements=JsonPath.read(responseAsString, "$.data[0].total");
-		LOGGER.debug("Connection Successful. Found {} MDS", numMeasurements);
-        return FormValidation.ok("Connection Successful.  Found " + numMeasurements + " Metadata sets");
+		LOGGER.debug("Connection Successful. Found {} CDS", numMeasurements);
+        return FormValidation.ok("Connection Successful.  Found " + numMeasurements + " Config Data sets");
         } else 
         return	FormValidation.error("Connection Error: " + SweagleUtils.getErrorfromResponse(responseAsString));
         }
