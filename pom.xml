@@ -9,7 +9,7 @@
 	</parent>
 	<groupId>io.jenkins.plugins</groupId>
 	<artifactId>sweagle</artifactId>
-	<version>1.1.6-SNAPSHOT</version>
+	<version>1.1.6</version>
 	<packaging>hpi</packaging>
 	<url>https://wiki.jenkins.io/display/JENKINS/SWEAGLE+Plugin</url>
 	<properties>
@@ -98,7 +98,7 @@
 		<connection>scm:git:ssh://github.com/jenkinsci/sweagle-plugin.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/jenkinsci/sweagle-plugin.git</developerConnection>
 		<url>https://github.com/jenkinsci/sweagle-plugin</url>
-		<tag>HEAD</tag>
+		<tag>sweagle-1.1.6</tag>
 	</scm>
 	<repositories>
 		<repository>
