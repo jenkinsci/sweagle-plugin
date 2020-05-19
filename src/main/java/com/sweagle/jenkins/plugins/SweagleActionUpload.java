@@ -27,14 +27,13 @@ package com.sweagle.jenkins.plugins;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.charset.Charset;
+
 
 import javax.annotation.CheckForNull;
 
 import java.util.Arrays;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.tools.ant.DirectoryScanner;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 
@@ -246,34 +245,26 @@ public class SweagleActionUpload extends hudson.tasks.Builder implements SimpleB
 					+ fileLocationExps[fileLocationExps.length - 1];
 			fileLocationExp = Arrays.toString(fileLocationExps).replace("[", "").replace("]", "")
 					.replace(",", File.separator).replace(" ", "");
+	
+			loggerUtils.debug(fileLocationExp);
+			
 		}
 		if (showResults)
 			loggerUtils.debug("DirectoryScanner setIncludes: " + fileLocationExp);
 
-		// Multi File Support
+		// remote slave support
+			
+		FilePath[] files=workspace.list(fileLocationExp);
 
-		DirectoryScanner scanner = new DirectoryScanner();
-//		String directory = System.getProperty("user.dir");
-//		if (env.get("WORKSPACE") != null) {
-//			directory = env.get("WORKSPACE");
-		String directory = workspace.toString();
 
-		
-		scanner.setBasedir(directory);
-		if (showResults) {
-			loggerUtils.debug("DirectoryScanner setBasedir: " + directory);
-		}
-		scanner.setIncludes(new String[] { fileLocationExp });
-		scanner.scan();
-		String[] files = scanner.getIncludedFiles();
-
-		loggerUtils.debug("DirectoryScanner found: " + files.length + " files.");
+		loggerUtils.debug(" Found: " + files.length + " files.");
 		if (files.length > 0) {
 
 			int changeSetId = SweagleUtils.createChangeSet(sweagleURL, sweagleAPIkey, showResults, descriptionEnv,
 					listener, env);
 
-			for (String file : files) {
+			for (FilePath file : files) {
+
 				actionResonse = SweagleUtils.uploadConfig(sweagleURL, sweagleAPIkey, file, nodePathExp, format,
 						allowDelete, onlyParent, filenameNodes, identifierWordsEnv, autoRecognize, markFailed, workspace, listener, showResults, changeSetId, env);
 			}

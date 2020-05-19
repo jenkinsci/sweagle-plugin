@@ -1,15 +1,14 @@
 package com.sweagle.jenkins.plugins;
 
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.Predicate;
@@ -86,7 +85,7 @@ public class SweagleUtils {
 
 	}
 
-	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, String fileName, String nodePath, String format,
+	static String uploadConfig(String sweagleURL, Secret sweagleAPIkey, FilePath fileName, String nodePath, String format,
 		boolean allowDelete, boolean onlyParent, boolean filenameNodes, String identifierWords, boolean autoRecognize, boolean markFailed, FilePath workspace, TaskListener listener,
 		boolean showResults, int changeset, EnvVars env) throws AbortException, UnsupportedEncodingException {
 		PrintStream logger = listener.getLogger();
@@ -94,11 +93,12 @@ public class SweagleUtils {
 		loggerUtils.info("Uploading Config from " + fileName + " to " + nodePath);
 		String responseString = null;
 		String content = null;
-		String directory = ".";
-		directory = workspace.toString();
+
 		try {
-			content = readFile(directory+File.separator+fileName, Charset.defaultCharset());
-		} catch (IOException e) {
+	
+			content = fileName.readToString();
+		
+		} catch (InterruptedException | IOException e) {
 			if (markFailed)
 				throw new AbortException(e.toString());
 			else
@@ -107,8 +107,12 @@ public class SweagleUtils {
 
 		if (filenameNodes) {
 			nodePath = nodePath + "," + fileName;
+			nodePath = nodePath.replace(workspace.toString(),""); //ensure nodepath relative to workspace only
 			nodePath = nodePath.replace("/", ",");
-			nodePath = nodePath.replace("\\", ",");
+			nodePath = nodePath.replace("\\", ",");	
+			nodePath = nodePath.replace(",,", ",");		
+			if (showResults)	
+				loggerUtils.debug("uploading nodePath:" +nodePath);
 		}
 
 		MediaType mediaType = MediaType.parse("text/plain");
@@ -208,11 +212,12 @@ public class SweagleUtils {
 		}
 
 		String content = responseString;
-
+        FilePath destination = workspace.child(fileLocation);
+        
+		
 		try {
-			
-				Files.write(Paths.get(workspace.toString() + File.separator + fileLocation),
-						content.getBytes(StandardCharsets.UTF_8));
+ 
+			destination.write(content, "UTF-8");
 			
 		} catch (Exception e) {
 			if (markFailed)
@@ -224,14 +229,15 @@ public class SweagleUtils {
 		return responseString;
 	}
 
-	static boolean validateProgress(String mdsName, String sweagleURL, Secret sweagleAPIkey, boolean markFailed,
+	static boolean validateProgress(String mdsName, String sweagleURL, Secret sweagleAPIkey, boolean markFailed, boolean stored,
 			TaskListener listener) throws AbortException, InterruptedException {
 		PrintStream logger = listener.getLogger();
 		LoggerUtils loggerUtils = new LoggerUtils(logger);
 		String responseString = null;
 		Response response = null;
+		boolean forIncoming=!stored;
 		Request request = new Request.Builder()
-				.url(sweagleURL + "/api/v1/data/include/validation_progress?name=" + mdsName + "&forIncoming=true")
+				.url(sweagleURL + "/api/v1/data/include/validation_progress?name=" + mdsName + "&forIncoming="+forIncoming)
 				.get().addHeader("Authorization", "Bearer " + Secret.toString(sweagleAPIkey)).addHeader("Accept", "*/*")
 				.build();
 
@@ -247,11 +253,17 @@ public class SweagleUtils {
 		}
 
 		if (responseString.contains("FINISHED")) {
-			loggerUtils.info("Checking validation progress for " + mdsName + " validation complete ");
+			if (stored)
+			loggerUtils.info("Checking stored validation status for " + mdsName + " validation complete ");
+			else
+			loggerUtils.info("Checking pending validation progress for " + mdsName + " validation complete ");
 			return true;
 
 		} else {
-			loggerUtils.info("Checking validation progress for " + mdsName + " status:" + responseString);
+			if (stored)
+				loggerUtils.info("Checking stored validation status for " + mdsName + " status:" + responseString);
+			else
+				loggerUtils.info("Checking pending validation progress for " + mdsName + " status:" + responseString);
 			return false;
 		}
 	}

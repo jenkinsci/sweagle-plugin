@@ -193,10 +193,10 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 		String actionResonse = null;
 		int retry=2;
 		
-			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)&&(retry<retryCount||retryCount==-1)) {
+			while (!SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, stored, listener)&&(retry<retryCount||retryCount==-1)) {
 				Thread.sleep(retryInterval*1000);
 				retry ++;}
-			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, listener)) {
+			if (SweagleUtils.validateProgress(mdsName, sweagleURL, sweagleAPIkey, markFailed, stored, listener)) {
 			//Generate Validation Report  prefix for stored or pending
 			String prefix;
 				if (stored)
