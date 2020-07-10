@@ -20,6 +20,7 @@
 	        <option value="txt" selected="${instance.format.equals('txt')? 'true':null}">txt</option>
 	        <option value="properties" selected="${instance.format.equals('properties')? 'true':null}">properties</option>
 	        <option value="ini" selected="${instance.format.equals('ini')? 'true':null}">ini</option>
+	        <option value="raw" selected="${instance.format.equals('raw')? 'true':null}">raw</option>
 	    </select>
     </f:entry>
     <f:entry title="Allow Delete" field="allowDelete">
