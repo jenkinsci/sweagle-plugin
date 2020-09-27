@@ -208,7 +208,7 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 			run.addAction(validationReport);
 			SweagleValidateReportUtils.writeJunitXmlFile(validatorStatuses, workspace);
 			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed,  warnMax, errMax, listener, showResults, stored, run );
-			//loggerUtils.info(actionResonse);
+
 
 			}
 			else {
