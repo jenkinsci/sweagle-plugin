@@ -206,7 +206,10 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 			ArrayList<ValidatorStatus> validatorStatuses=SweagleValidateReportUtils.buildValidatorStatuses(mdsNameExp, sweagleURL, sweagleAPIkey,  listener, showResults, stored, run);
 			ValidationReport validationReport = new ValidationReport(validatorStatuses, mdsName, prefix, run);
 			run.addAction(validationReport);
+			SweagleValidateReportUtils.writeJunitXmlFile(validatorStatuses, workspace);
 			actionResonse = SweagleUtils.validateConfig(mdsNameExp, sweagleURL, sweagleAPIkey, markFailed,  warnMax, errMax, listener, showResults, stored, run );
+			//loggerUtils.info(actionResonse);
+
 			}
 			else {
 				if (noPending)
@@ -214,10 +217,12 @@ public class SweagleActionValidate extends hudson.tasks.Builder implements Simpl
 				else 
 					loggerUtils.info("Data for " + mdsNameExp + " not found.");	
 			}
+
+		// show results always in the log
 		if (showResults)
 		loggerUtils.debug(actionResonse);
-		
-		
+
+
 
 	}
 

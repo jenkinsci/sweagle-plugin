@@ -69,8 +69,8 @@ public class SweagleUtils {
 		int mdsWarns = JsonPath.read(responseString, "summary.warnings");
 		loggerUtils.info(mdsName + " contains " + mdsWarns + " warnings and " + mdsErrors + " errors");
 		if (mdsErrors > errMax & errMax != -1) {
-			if (showResults)
-				loggerUtils.debug("validateResults:"+responseString);
+			//if (showResults)
+				loggerUtils.info("validateResults:"+responseString);
 			
 			if (markFailed)
 				throw new AbortException(" Errors: " + mdsErrors + " Exceeds error threshold: " + errMax);

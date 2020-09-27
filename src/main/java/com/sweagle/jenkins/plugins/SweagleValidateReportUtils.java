@@ -1,5 +1,6 @@
 package com.sweagle.jenkins.plugins;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import com.jayway.jsonpath.JsonPath;
 
 import hudson.EnvVars;
+import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
@@ -20,6 +22,18 @@ import net.minidev.json.JSONObject;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 public class SweagleValidateReportUtils {
 
@@ -195,6 +209,61 @@ public class SweagleValidateReportUtils {
 
 		return validatorStatuses;
 
+	}
+	public static void writeJunitXmlFile(ArrayList<ValidatorStatus> list, FilePath workspace) {
+
+		try {
+
+			DocumentBuilderFactory dFact = DocumentBuilderFactory.newInstance();
+			DocumentBuilder build = dFact.newDocumentBuilder();
+			Document doc = build.newDocument();
+
+			Element root = doc.createElement("testsuite");
+			root.setAttribute("name","Sweagle Validators");
+			doc.appendChild(root);
+
+			for (ValidatorStatus validatorStatus : list) {
+
+				Element testcase = doc.createElement("testcase");
+				root.appendChild(testcase);
+				testcase.setAttribute("name",validatorStatus.getValidatorName());
+				if (!validatorStatus.getValidatorInfo().equals("")) {
+					Element failure = doc.createElement("failure");
+					failure.setAttribute("type",validatorStatus.getValidatorStatus());
+					failure.setTextContent(validatorStatus.getValidatorInfo());
+					testcase.appendChild(failure);
+								}
+			}
+
+			// Save the document to the disk file
+			TransformerFactory tranFactory = TransformerFactory.newInstance();
+			Transformer aTransformer = tranFactory.newTransformer();
+
+			// format the XML nicely
+			aTransformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+
+			aTransformer.setOutputProperty(
+					"{http://xml.apache.org/xslt}indent-amount", "4");
+			aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+			DOMSource source = new DOMSource(doc);
+			try {
+				// location and name of XML file you can change as per need
+				FileWriter fos = new FileWriter(String.valueOf(workspace.child("sweagle-validation.xml")));
+				StreamResult result = new StreamResult(fos);
+				aTransformer.transform(source, result);
+
+			} catch (IOException e) {
+
+				e.printStackTrace();
+			}
+
+		} catch (TransformerException ex) {
+			System.out.println("Error outputting document");
+
+		} catch (ParserConfigurationException ex) {
+			System.out.println("Error building document");
+		}
 	}
 
 }
