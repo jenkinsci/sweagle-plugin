@@ -1,8 +1,6 @@
 package com.sweagle.jenkins.plugins;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintStream;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -249,7 +247,7 @@ public class SweagleValidateReportUtils {
 			DOMSource source = new DOMSource(doc);
 			try {
 				// location and name of XML file you can change as per need
-				FileWriter fos = new FileWriter(String.valueOf(workspace.child("sweagle-validation.xml")));
+				OutputStreamWriter fos = new OutputStreamWriter(new FileOutputStream(String.valueOf(workspace.child("sweagle-validation.xml"))),"UTF-8");
 				StreamResult result = new StreamResult(fos);
 				aTransformer.transform(source, result);
 
