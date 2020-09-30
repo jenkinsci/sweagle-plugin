@@ -224,6 +224,7 @@ public class SweagleValidateReportUtils {
 
 				Element testcase = doc.createElement("testcase");
 				root.appendChild(testcase);
+				testcase.setAttribute("classname","Sweagle.ConfigDataValidations");
 				testcase.setAttribute("name",validatorStatus.getValidatorName());
 				if (!validatorStatus.getValidatorInfo().equals("")) {
 					Element failure = doc.createElement("failure");
