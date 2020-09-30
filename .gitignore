@@ -2,3 +2,5 @@
 /target/
 /work/
 /sweagle.iml
+/sweagle jenkins plugin.iml
+/.gitignore
