@@ -24,6 +24,8 @@
 
 package com.sweagle.jenkins.plugins;
 
+import okhttp3.*;
+import org.apache.commons.lang.StringUtils;
 import org.jenkinsci.Symbol;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.StaplerRequest;
@@ -42,9 +44,10 @@ import hudson.util.Secret;
 import jenkins.model.Jenkins;
 
 import net.sf.json.JSONObject;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 
 //DescriptorImpl governs the global config settings
 
@@ -54,6 +57,10 @@ public final class DescriptorImpl_Validate extends BuildStepDescriptor<Builder> 
     private static final Logger LOGGER = LoggerFactory.getLogger(SweagleActionValidate.class);
     private String sweagleURL;
     private Secret sweagleAPIkey;
+    private String proxyHost;
+    private int proxyPort;
+    private String proxyUser;
+    private Secret proxyPassword;
     
     public DescriptorImpl_Validate() {
         super(SweagleActionValidate.class);
@@ -76,6 +83,10 @@ public final class DescriptorImpl_Validate extends BuildStepDescriptor<Builder> 
         formData = formData.getJSONObject("SWEAGLE");
         sweagleURL = formData.getString("sweagleURL");
         sweagleAPIkey = Secret.fromString(formData.getString("sweagleAPIkey"));
+        proxyHost = formData.getString("proxyHost");
+        proxyPort = formData.getInt("proxyPort");
+        proxyUser = formData.getString("proxyUser");
+        proxyPassword = Secret.fromString(formData.getString("proxyPassword"));
         save();
         return false;
     }
@@ -84,30 +95,71 @@ public final class DescriptorImpl_Validate extends BuildStepDescriptor<Builder> 
     public String getSweagleURL() {
         return sweagleURL;
     }
-
+    public String getProxyHost() {
+        return proxyHost;
+    }
+    public int getProxyPort() { return proxyPort; }
+    public String getProxyUser() {
+        return proxyUser;
+    }
     public Secret getSweagleAPIkey() {
         return sweagleAPIkey;
     }
-
+    public Secret getProxyPassword() {
+        return proxyPassword;
+    }
 
 
     public void setsweagleURL(String sweagleURL) {
         this.sweagleURL = sweagleURL;
     }
-
+    public void setProxyHostL(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+    public void setProxyPort(int proxyPort) {
+        this.proxyPort = proxyPort;
+    }
+    public void setProxyUser(String proxyUser) {
+        this.proxyUser = proxyUser;
+    }
     public void setSweagleAPIkey(Secret sweagleAPIkey) {
         this.sweagleAPIkey = sweagleAPIkey;
+    }
+    public void setProxyPassword(Secret proxyPassword) {
+        this.proxyPassword = proxyPassword;
     }
 
     // Added @POST to help protect against CSRF
     @POST
     public FormValidation doTestConnection(
-    		
+
             @QueryParameter("sweagleURL") final String sweagleURL,
+            @QueryParameter("proxyHost") final String proxyHost,
+            @QueryParameter("proxyPort") final int proxyPort,
+            @QueryParameter("proxyUser") final String proxyUser,
+            @QueryParameter("proxyPassword") final Secret proxyPassword,
             @QueryParameter("sweagleAPIkey") final Secret sweagleAPIkey) {
         // Admin permission check
         Jenkins.getInstance().checkPermission(Jenkins.ADMINISTER);
+
+        Proxy sweagleProxy = new Proxy(Proxy.Type.HTTP,new InetSocketAddress(proxyHost, proxyPort));
         OkHttpClient client = new OkHttpClient();
+        Authenticator proxyAuthenticator = new Authenticator() {
+            @Override
+            public Request authenticate(Route route, Response response) throws IOException {
+                String credential = Credentials.basic(proxyUser, Secret.toString(proxyPassword));
+                return response.request().newBuilder()
+                        .header("Proxy-Authorization", credential)
+                        .build();
+            }
+        };
+      if (!proxyHost.isEmpty()) {
+          client = client.newBuilder().proxy(sweagleProxy).build();
+          if (!proxyUser.isEmpty()) {
+              client = client.newBuilder().proxy(sweagleProxy).proxyAuthenticator(proxyAuthenticator).build();
+          }
+      }
+
         String responseAsString = "";
         int responseCode = 200;
         try {        

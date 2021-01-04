@@ -7,8 +7,20 @@
         <f:entry title="SWEAGLE API Key" field="sweagleAPIkey">
             <f:password />
         </f:entry>
+        <f:entry title="SWEAGLE Proxy Host" field="proxyHost">
+                    <f:textbox />
+        </f:entry>
+        <f:entry title="SWEAGLE Proxy Port" field="proxyPort">
+                    <f:textbox />
+        </f:entry>
+        <f:entry title="SWEAGLE Proxy User" field="proxyUser">
+                    <f:textbox />
+        </f:entry>
+        <f:entry title="SWEAGLE Proxy Password" field="proxyPassword">
+                    <f:password />
+        </f:entry>
         <f:validateButton
    title="${%Test Connection}" progress="${%Testing...}"
-   method="testConnection" with="sweagleURL,sweagleAPIkey" />
+   method="testConnection" with="sweagleURL,sweagleAPIkey,proxyHost,proxyPort,proxyUser,proxyPassword" />
         </f:section>   
 </j:jelly>

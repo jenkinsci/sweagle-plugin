@@ -1,6 +1,8 @@
 package com.sweagle.jenkins.plugins;
 
 import java.io.*;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -13,13 +15,12 @@ import hudson.FilePath;
 import hudson.model.Run;
 import hudson.model.TaskListener;
 import hudson.util.Secret;
+import jenkins.model.Jenkins;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -37,6 +38,32 @@ public class SweagleValidateReportUtils {
 
 	static OkHttpClient client = new OkHttpClient().newBuilder().connectTimeout(60, TimeUnit.SECONDS)
 			.readTimeout(60, TimeUnit.SECONDS).writeTimeout(60, TimeUnit.SECONDS).build();
+	static {
+		Jenkins jenkins = Jenkins.getInstance();
+		DescriptorImpl_Validate descriptorImpl = jenkins.getDescriptorByType(DescriptorImpl_Validate.class);
+		String proxyHost = descriptorImpl.getProxyHost();
+		int proxyPort = descriptorImpl.getProxyPort();
+		String proxyUser = descriptorImpl.getProxyUser();
+		Secret proxyPassword = descriptorImpl.getProxyPassword();
+		Proxy sweagleProxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyHost, proxyPort));
+		Authenticator proxyAuthenticator = new Authenticator() {
+			@Override
+			public Request authenticate(Route route, Response response) throws IOException {
+				String credential = Credentials.basic(proxyUser, Secret.toString(proxyPassword));
+				return response.request().newBuilder()
+						.header("Proxy-Authorization", credential)
+						.build();
+			}
+		};
+		if (!proxyHost.isEmpty()) {
+			client = client.newBuilder().connectTimeout(60, TimeUnit.SECONDS)
+					.readTimeout(60, TimeUnit.SECONDS).proxy(sweagleProxy).writeTimeout(60, TimeUnit.SECONDS).build();
+			if(!proxyUser.isEmpty()){
+				client = client.newBuilder().connectTimeout(60, TimeUnit.SECONDS)
+						.readTimeout(60, TimeUnit.SECONDS).proxy(sweagleProxy).proxyAuthenticator(proxyAuthenticator).writeTimeout(60, TimeUnit.SECONDS).build();
+			}
+		}
+	}
 
 	static String getMdsId(String mdsName, String sweagleURL, Secret sweagleAPIkey, TaskListener listener,
 			boolean showResults, Run<?, ?> run) throws InterruptedException, IOException {
